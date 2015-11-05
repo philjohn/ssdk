@@ -586,9 +586,10 @@ handle_tab(void)
 
     memset(matchBuf, 0, MATCH_BUF_MAX);
 
-	if(cmd_cursor < MATCH_BUF_MAX)
+	if(cmd_cursor < MATCH_BUF_MAX) {
 		strncpy(matchBuf, cmd_strp, cmd_cursor);
-	else {
+		matchBuf[cmd_cursor] = '\0';
+	} else {
 		strncpy(matchBuf, cmd_strp, MATCH_BUF_MAX-1);
 		matchBuf[MATCH_BUF_MAX-1] = '\0';
 	}

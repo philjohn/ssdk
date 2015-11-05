@@ -88,7 +88,7 @@ cmd_input_parser(a_uint32_t *arg_val, a_uint32_t arg_index, sw_api_param_t *pp)
     a_int16_t i;
     a_uint32_t *pbuf;
     a_uint16_t rtn_size = 1;
-    sw_api_param_t *pptmp;
+    sw_api_param_t *pptmp = pp;
 
     pbuf = ioctl_buf + rtn_size;    /*reserve for return value */
 
@@ -530,7 +530,7 @@ static int
 cmd_exec(a_uint32_t *arg_val, int cmd_index, int cmd_index_sub)
 {
     a_uint32_t api_id = arg_val[0];
-    sw_error_t rtn;
+    sw_error_t rtn = SW_OK;
 
     if( api_id < SW_API_MAX )
     {
