@@ -5809,7 +5809,7 @@ cmd_data_print_cable_len(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t si
     dprintf("[%s]:%d", param_name, *(a_uint32_t *) buf);
 }
 
-inline char*
+char*
 cmd_cpu_mode(hsl_init_mode mode)
 {
     switch (mode)
@@ -5827,7 +5827,7 @@ cmd_cpu_mode(hsl_init_mode mode)
     return "unknow";
 }
 
-inline char*
+char*
 cmd_access_mode(hsl_access_mode mode)
 {
     switch (mode)
