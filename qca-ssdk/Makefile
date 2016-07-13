@@ -48,11 +48,18 @@ define KernelPackage/qca-ssdk-hnat/Description
 This package contains a qca-ssdk-hnat driver for QCA chipset
 endef
 
+GCC_VERSION=$(shell echo "$(CONFIG_GCC_VERSION)" | sed 's/[^0-9.]*\([0-9.]*\).*/\1/')
+ifeq ($(GCC_VERSION), 4.8)
+GCC_VERSION=4.8.3
+endif
+
 QCASSDK_CONFIG_OPTS+= TOOL_PATH=$(TOOLCHAIN_DIR)/bin/ \
                 SYS_PATH=$(LINUX_DIR) \
                 TOOLPREFIX=$(TARGET_CROSS) \
                 KVER=$(LINUX_VERSION) \
-                ARCH=$(LINUX_KARCH)
+                ARCH=$(LINUX_KARCH) \
+		TARGET_SUFFIX=$(CONFIG_TARGET_SUFFIX) \
+		GCC_VERSION=$(GCC_VERSION)
 
 ifeq ($(LOCAL_VARIANT),hnat)
     QCASSDK_CONFIG_OPTS+= HNAT_FEATURE=enable
