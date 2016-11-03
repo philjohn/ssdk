@@ -92,6 +92,27 @@ define Build/InstallDev
 	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_vsi.h ]; then \
 	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_vsi.h $(1)/usr/include/qca-ssdk/fal/; \
 	fi
+	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_policer.h ]; then \
+	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_policer.h $(1)/usr/include/qca-ssdk/fal/; \
+	fi
+	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_ctrlpkt.h ]; then \
+	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_ctrlpkt.h $(1)/usr/include/qca-ssdk/fal/; \
+	fi
+	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_mirror.h ]; then \
+	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_mirror.h $(1)/usr/include/qca-ssdk/fal/; \
+	fi
+	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_trunk.h ]; then \
+	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_trunk.h $(1)/usr/include/qca-ssdk/fal/; \
+	fi
+	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_stp.h ]; then \
+	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_stp.h $(1)/usr/include/qca-ssdk/fal/; \
+	fi
+	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_pppoe.h ]; then \
+	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_pppoe.h $(1)/usr/include/qca-ssdk/fal/; \
+	fi
+	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_mib.h ]; then \
+	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_mib.h $(1)/usr/include/qca-ssdk/fal/; \
+	fi
 	$(CP) -rf $(PKG_BUILD_DIR)/include/common $(1)/usr/include/qca-ssdk
 	$(CP) -rf $(PKG_BUILD_DIR)/include/sal/os $(1)/usr/include/qca-ssdk/sal
 endef
