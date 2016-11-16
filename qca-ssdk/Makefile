@@ -77,6 +77,9 @@ define Build/InstallDev
 	if [ -f $(PKG_BUILD_DIR)/include/ref/ref_vsi.h ]; then \
 	$(CP) -rf $(PKG_BUILD_DIR)/include/ref/ref_vsi.h $(1)/usr/include/qca-ssdk/ref/; \
 	fi
+	if [ -f $(PKG_BUILD_DIR)/include/ref/ref_fdb.h ]; then \
+	$(CP) -rf $(PKG_BUILD_DIR)/include/ref/ref_fdb.h $(1)/usr/include/qca-ssdk/ref/; \
+	fi
 	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_bm.h ]; then \
 	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_bm.h $(1)/usr/include/qca-ssdk/fal/; \
 	fi
