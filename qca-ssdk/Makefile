@@ -59,7 +59,8 @@ QCASSDK_CONFIG_OPTS+= TOOL_PATH=$(TOOLCHAIN_DIR)/bin/ \
                 KVER=$(LINUX_VERSION) \
                 ARCH=$(LINUX_KARCH) \
 		TARGET_SUFFIX=$(CONFIG_TARGET_SUFFIX) \
-		GCC_VERSION=$(GCC_VERSION)
+		GCC_VERSION=$(GCC_VERSION) \
+		CFLAGS=-I$(STAGING_DIR)/usr/include
 
 ifeq ($(LOCAL_VARIANT),hnat)
     QCASSDK_CONFIG_OPTS+= HNAT_FEATURE=enable
@@ -76,6 +77,9 @@ define Build/InstallDev
 	if [ -f $(PKG_BUILD_DIR)/include/ref/ref_vsi.h ]; then \
 	$(CP) -rf $(PKG_BUILD_DIR)/include/ref/ref_vsi.h $(1)/usr/include/qca-ssdk/ref/; \
 	fi
+	if [ -f $(PKG_BUILD_DIR)/include/ref/ref_fdb.h ]; then \
+	$(CP) -rf $(PKG_BUILD_DIR)/include/ref/ref_fdb.h $(1)/usr/include/qca-ssdk/ref/; \
+	fi
 	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_bm.h ]; then \
 	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_bm.h $(1)/usr/include/qca-ssdk/fal/; \
 	fi
@@ -91,6 +95,30 @@ define Build/InstallDev
 	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_portvlan.h $(1)/usr/include/qca-ssdk/fal
 	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_vsi.h ]; then \
 	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_vsi.h $(1)/usr/include/qca-ssdk/fal/; \
+	fi
+	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_policer.h ]; then \
+	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_policer.h $(1)/usr/include/qca-ssdk/fal/; \
+	fi
+	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_ctrlpkt.h ]; then \
+	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_ctrlpkt.h $(1)/usr/include/qca-ssdk/fal/; \
+	fi
+	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_mirror.h ]; then \
+	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_mirror.h $(1)/usr/include/qca-ssdk/fal/; \
+	fi
+	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_trunk.h ]; then \
+	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_trunk.h $(1)/usr/include/qca-ssdk/fal/; \
+	fi
+	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_stp.h ]; then \
+	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_stp.h $(1)/usr/include/qca-ssdk/fal/; \
+	fi
+	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_pppoe.h ]; then \
+	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_pppoe.h $(1)/usr/include/qca-ssdk/fal/; \
+	fi
+	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_mib.h ]; then \
+	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_mib.h $(1)/usr/include/qca-ssdk/fal/; \
+	fi
+	if [ -f $(PKG_BUILD_DIR)/include/ref/ref_port_ctrl.h ]; then \
+	$(CP) -rf $(PKG_BUILD_DIR)/include/ref/ref_port_ctrl.h $(1)/usr/include/qca-ssdk/ref/; \
 	fi
 	$(CP) -rf $(PKG_BUILD_DIR)/include/common $(1)/usr/include/qca-ssdk
 	$(CP) -rf $(PKG_BUILD_DIR)/include/sal/os $(1)/usr/include/qca-ssdk/sal
