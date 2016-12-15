@@ -39,7 +39,7 @@ endef
 
 define KernelPackage/qca-ssdk-hnat
 $(call KernelPackage/qca-ssdk/default-nohnat)
-  DEPENDS:=+kmod-ipt-extra +kmod-ipt-filter +kmod-ipv6 +kmod-qca-rfs +kmod-ppp
+  DEPENDS:=+kmod-ipt-extra +kmod-ipt-filter +kmod-ipv6 +TARGET_ipq806x:kmod-qca-rfs +kmod-ppp
   TITLE+= (hnat)
   VARIANT:=hnat
 endef
@@ -64,7 +64,9 @@ QCASSDK_CONFIG_OPTS+= TOOL_PATH=$(TOOLCHAIN_DIR)/bin/ \
 
 ifeq ($(LOCAL_VARIANT),hnat)
     QCASSDK_CONFIG_OPTS+= HNAT_FEATURE=enable
+ifeq ($(CONFIG_TARGET_ar71xx),)
     QCASSDK_CONFIG_OPTS+= RFS_FEATURE=enable
+endif
 endif
 
 define Build/InstallDev
