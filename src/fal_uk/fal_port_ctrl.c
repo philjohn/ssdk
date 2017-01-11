@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014, 2017, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -723,35 +723,35 @@ fal_port_interface_mode_status_get (a_uint32_t dev_id, fal_port_t port_id, fal_p
 }
 
 sw_error_t
-fal_port_counter_set(a_uint32_t dev_id, fal_port_t port_id,
+fal_debug_phycounter_set(a_uint32_t dev_id, fal_port_t port_id,
                        a_bool_t enable)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_PT_COUNTER_SET, dev_id, port_id,
+    rv = sw_uk_exec(SW_API_DEBUG_PHYCOUNTER_SET, dev_id, port_id,
                     (a_uint32_t) enable);
     return rv;
 }
 
 sw_error_t
-fal_port_counter_get(a_uint32_t dev_id, fal_port_t port_id,
+fal_debug_phycounter_get(a_uint32_t dev_id, fal_port_t port_id,
                        a_bool_t * enable)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_PT_COUNTER_GET, dev_id, port_id,
+    rv = sw_uk_exec(SW_API_DEBUG_PHYCOUNTER_GET, dev_id, port_id,
                     (a_uint32_t) enable);
     return rv;
 }
 
 sw_error_t
-fal_port_counter_show(a_uint32_t dev_id, fal_port_t port_id,
-                       fal_port_counter_info_t * counter_info)
+fal_debug_phycounter_show(a_uint32_t dev_id, fal_port_t port_id,
+                       fal_port_counter_info_t * port_counter_info)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_PT_COUNTER_SHOW, dev_id, port_id,
-                    (a_uint32_t) counter_info);
+    rv = sw_uk_exec(SW_API_DEBUG_PHYCOUNTER_SHOW, dev_id, port_id,
+                    (a_uint32_t) port_counter_info);
     return rv;
 }
 
