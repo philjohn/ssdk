@@ -167,6 +167,7 @@ term_echo(void)
         putchar(' ');
     }
 
+    fflush(stdout);
     term_cursor++;
     cmd_cursor++;
 }
@@ -453,6 +454,11 @@ handle_help(void)
     int cmd_nr = 0, pmatch_nr = 0, pmatch_sub_nr = 0;
     char *tmp_str[3], *cmd_strp_cp = strdup(cmd_strp), *str_save;
 
+    if (!cmd_strp_cp)
+        return;
+
+    cmd_strp_cp[strlen(cmd_strp) - 1] = '\0';
+
     /* split command string into temp array */
     tmp_str[cmd_nr] = (void *) strtok_r(cmd_strp_cp, " ", &str_save);
 
@@ -602,6 +608,7 @@ handle_tab(void)
         print_cmd_all();
         if (cmd_promptp)
             printf("\n%s%s", cmd_promptp, cmd_strp);
+	fflush(stdout);
         _cursor_recover();
         return;
     }
@@ -681,6 +688,7 @@ handle_tab(void)
         /*re-echo */
         if (cmd_promptp)
             printf("\n%s%s", cmd_promptp, cmd_strp);
+	fflush(stdout);
         _cursor_recover();
     }
     //_cursor_recover();

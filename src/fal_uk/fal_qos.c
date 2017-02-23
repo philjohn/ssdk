@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014, 2017, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -400,3 +400,192 @@ fal_qos_queue_remark_table_get(a_uint32_t dev_id, fal_port_t port_id,
     return rv;
 }
 
+sw_error_t
+fal_qos_port_group_set(a_uint32_t dev_id, fal_port_t port_id,
+					fal_qos_group_t *group)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_QOS_PORT_GROUP_SET, dev_id, port_id, group);
+    return rv;
+}
+
+sw_error_t
+fal_qos_port_group_get(a_uint32_t dev_id, fal_port_t port_id,
+					fal_qos_group_t *group)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_QOS_PORT_GROUP_GET, dev_id, port_id, group);
+    return rv;
+}
+
+sw_error_t
+fal_qos_port_pri_precedence_set(a_uint32_t dev_id, fal_port_t port_id,
+					fal_qos_pri_precedence_t *pri)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_QOS_PORT_PRI_SET, dev_id, port_id, pri);
+    return rv;
+}
+
+sw_error_t
+fal_qos_port_pri_precedence_get(a_uint32_t dev_id, fal_port_t port_id,
+					fal_qos_pri_precedence_t *pri)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_QOS_PORT_PRI_GET, dev_id, port_id, pri);
+    return rv;
+}
+
+sw_error_t
+fal_qos_port_remark_set(a_uint32_t dev_id, fal_port_t port_id,
+					fal_qos_remark_enable_t *remark)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_QOS_PORT_REMARK_SET, dev_id, port_id, remark);
+    return rv;
+}
+
+sw_error_t
+fal_qos_port_remark_get(a_uint32_t dev_id, fal_port_t port_id,
+					fal_qos_remark_enable_t *remark)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_QOS_PORT_REMARK_GET, dev_id, port_id, remark);
+    return rv;
+}
+
+sw_error_t
+fal_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id,
+					a_uint8_t pcp, fal_qos_cosmap_t *cosmap)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_QOS_PCP_MAP_SET, dev_id, group_id, pcp, cosmap);
+    return rv;
+}
+
+sw_error_t
+fal_qos_cosmap_pcp_get(a_uint32_t dev_id, a_uint8_t group_id,
+					a_uint8_t pcp, fal_qos_cosmap_t *cosmap)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_QOS_PCP_MAP_GET, dev_id, group_id, pcp, cosmap);
+    return rv;
+}
+
+sw_error_t
+fal_qos_cosmap_flow_set(a_uint32_t dev_id, a_uint8_t group_id,
+					a_uint8_t flow, fal_qos_cosmap_t *cosmap)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_QOS_FLOW_MAP_SET, dev_id, group_id, flow, cosmap);
+    return rv;
+}
+
+sw_error_t
+fal_qos_cosmap_flow_get(a_uint32_t dev_id, a_uint8_t group_id,
+					a_uint8_t flow, fal_qos_cosmap_t *cosmap)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_QOS_FLOW_MAP_GET, dev_id, group_id, flow, cosmap);
+    return rv;
+}
+
+sw_error_t
+fal_qos_cosmap_dscp_set(a_uint32_t dev_id, a_uint8_t group_id,
+					a_uint8_t dscp, fal_qos_cosmap_t *cosmap)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_QOS_DSCP_MAP_SET, dev_id, group_id, dscp, cosmap);
+    return rv;
+}
+
+sw_error_t
+fal_qos_cosmap_dscp_get(a_uint32_t dev_id, a_uint8_t group_id,
+					a_uint8_t dscp, fal_qos_cosmap_t *cosmap)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_QOS_DSCP_MAP_GET, dev_id, group_id, dscp, cosmap);
+    return rv;
+}
+
+sw_error_t
+fal_queue_scheduler_set(a_uint32_t dev_id, a_uint32_t node_id,
+					fal_queue_scheduler_level_t level, fal_port_t port_id,
+					fal_qos_scheduler_cfg_t *scheduler_cfg)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_QOS_QUEUE_SCHEDULER_SET, dev_id, node_id, level, port_id, scheduler_cfg);
+    return rv;
+}
+
+sw_error_t
+fal_queue_scheduler_get(a_uint32_t dev_id, a_uint32_t node_id,
+					fal_queue_scheduler_level_t level, fal_port_t *port_id,
+					fal_qos_scheduler_cfg_t *scheduler_cfg)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_QOS_QUEUE_SCHEDULER_GET, dev_id, node_id, level, port_id, scheduler_cfg);
+    return rv;
+}
+
+sw_error_t
+fal_edma_ring_queue_map_set(a_uint32_t dev_id, 
+					a_uint32_t ring_id, fal_queue_bmp_t *queue_bmp)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_QOS_RING_QUEUE_MAP_SET, dev_id, ring_id, queue_bmp);
+    return rv;
+}
+
+sw_error_t
+fal_edma_ring_queue_map_get(a_uint32_t dev_id, 
+					a_uint32_t ring_id, fal_queue_bmp_t *queue_bmp)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_QOS_RING_QUEUE_MAP_GET, dev_id, ring_id, queue_bmp);
+    return rv;
+}
+
+sw_error_t
+fal_port_queues_get(a_uint32_t dev_id, 
+				fal_port_t port_id, fal_queue_bmp_t *queue_bmp)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_QOS_PORT_QUEUES_GET, dev_id, port_id, queue_bmp);
+    return rv;
+}
+
+sw_error_t
+fal_scheduler_dequeue_ctrl_set(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t enable)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_QOS_SCHEDULER_DEQUEU_CTRL_SET, dev_id, queue_id, enable);
+    return rv;
+}
+
+sw_error_t
+fal_scheduler_dequeue_ctrl_get(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t *enable)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_QOS_SCHEDULER_DEQUEU_CTRL_GET, dev_id, queue_id, enable);
+    return rv;
+}

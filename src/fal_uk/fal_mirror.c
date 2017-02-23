@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014, 2016-2017, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -77,3 +77,22 @@ fal_mirr_port_eg_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
                     (a_uint32_t) enable);
     return rv;
 }
+
+sw_error_t
+fal_mirr_analysis_config_set(a_uint32_t dev_id, fal_mirr_direction_t direction, fal_mirr_analysis_config_t * config)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_MIRROR_ANALYSIS_CONFIG_SET, dev_id, direction, (a_uint32_t)config);
+    return rv;
+}
+
+sw_error_t
+fal_mirr_analysis_config_get(a_uint32_t dev_id, fal_mirr_direction_t direction, fal_mirr_analysis_config_t * config)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_MIRROR_ANALYSIS_CONFIG_GET, dev_id, direction, (a_uint32_t)config);
+    return rv;
+}
+

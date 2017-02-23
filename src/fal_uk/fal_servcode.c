@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, 2016-2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -16,45 +16,42 @@
 
 #include "sw.h"
 #include "sw_ioctl.h"
-#include "ssdk_init.h"
-#include "fal_init.h"
+#include "fal_servcode.h"
 #include "fal_uk_if.h"
 
-sw_error_t
-fal_reset(a_uint32_t dev_id)
+sw_error_t fal_servcode_config_set(a_uint32_t dev_id, a_uint32_t servcode_index,
+					fal_servcode_config_t *entry)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_SWITCH_RESET, dev_id);
+    rv = sw_uk_exec(SW_API_SERVCODE_CONFIG_SET, dev_id, servcode_index,
+                    (a_uint32_t) entry);
     return rv;
 }
 
-sw_error_t
-fal_ssdk_cfg(a_uint32_t dev_id, ssdk_cfg_t *ssdk_cfg)
+sw_error_t fal_servcode_config_get(a_uint32_t dev_id, a_uint32_t servcode_index,
+					fal_servcode_config_t *entry)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_SSDK_CFG, dev_id, ssdk_cfg);
+    rv = sw_uk_exec(SW_API_SERVCODE_CONFIG_GET, dev_id, servcode_index,
+                    (a_uint32_t) entry);
     return rv;
 }
 
-sw_error_t
-fal_module_func_ctrl_set(a_uint32_t dev_id, a_uint32_t module, fal_func_ctrl_t *func_ctrl)
+sw_error_t fal_servcode_loopcheck_en(a_uint32_t dev_id, a_bool_t enable)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_MODULE_FUNC_CTRL_SET, dev_id, module, func_ctrl);
+    rv = sw_uk_exec(SW_API_SERVCODE_LOOPCHECK_EN, dev_id, (a_uint32_t) enable);
     return rv;
 }
 
-sw_error_t
-fal_module_func_ctrl_get(a_uint32_t dev_id, a_uint32_t module, fal_func_ctrl_t *func_ctrl)
+sw_error_t fal_servcode_loopcheck_status_get(a_uint32_t dev_id, a_bool_t *enable)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_MODULE_FUNC_CTRL_GET, dev_id, module, func_ctrl);
+    rv = sw_uk_exec(SW_API_SERVCODE_LOOPCHECK_STATUS_GET, dev_id, (a_uint32_t) enable);
     return rv;
 }
-
-
 

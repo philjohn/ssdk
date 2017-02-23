@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, 2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014, 2016-2017, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -755,4 +755,91 @@ fal_debug_phycounter_show(a_uint32_t dev_id, fal_port_t port_id,
     return rv;
 }
 
+sw_error_t
+fal_port_mtu_set(a_uint32_t dev_id, fal_port_t port_id,
+                       fal_mtu_ctrl_t *ctrl)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_PT_MTU_SET, dev_id, port_id,
+                    (a_uint32_t) ctrl);
+    return rv;
+}
+
+sw_error_t
+fal_port_mtu_get(a_uint32_t dev_id, fal_port_t port_id,
+                       fal_mtu_ctrl_t *ctrl)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_PT_MTU_GET, dev_id, port_id,
+                    (a_uint32_t) ctrl);
+    return rv;
+}
+
+sw_error_t
+fal_port_mru_set(a_uint32_t dev_id, fal_port_t port_id,
+                       fal_mru_ctrl_t *ctrl)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_PT_MRU_SET, dev_id, port_id,
+                    (a_uint32_t) ctrl);
+    return rv;
+}
+
+sw_error_t
+fal_port_mru_get(a_uint32_t dev_id, fal_port_t port_id,
+                       fal_mru_ctrl_t *ctrl)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_PT_MRU_GET, dev_id, port_id,
+                    (a_uint32_t) ctrl);
+    return rv;
+}
+
+sw_error_t
+fal_port_source_filter_enable(a_uint32_t dev_id, fal_port_t port_id,
+                       a_bool_t enable)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_PT_SOURCE_FILTER_SET, dev_id, port_id,
+                    (a_uint32_t) enable);
+    return rv;
+}
+
+sw_error_t
+fal_port_source_filter_status_get(a_uint32_t dev_id, fal_port_t port_id,
+                       a_bool_t * enable)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_PT_SOURCE_FILTER_GET, dev_id, port_id,
+                    (a_uint32_t) enable);
+    return rv;
+}
+
+sw_error_t
+fal_port_max_frame_size_set(a_uint32_t dev_id, fal_port_t port_id,
+                       a_uint32_t max_frame)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_PT_FRAME_MAX_SIZE_SET, dev_id, port_id,
+                    max_frame);
+    return rv;
+}
+
+sw_error_t
+fal_port_max_frame_size_get(a_uint32_t dev_id, fal_port_t port_id,
+                       a_uint32_t* max_frame)
+{
+    sw_error_t rv;
+
+    rv = sw_uk_exec(SW_API_PT_FRAME_MAX_SIZE_GET, dev_id, port_id,
+                  max_frame);
+    return rv;
+}
 

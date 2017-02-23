@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, 2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014, 2016-2017, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -39,6 +39,8 @@ extern "c" {
         FAL_SPEED_10    = 10,
         FAL_SPEED_100   = 100,
         FAL_SPEED_1000  = 1000,
+        FAL_SPEED_2500  = 2500,
+        FAL_SPEED_5000  = 5000,
         FAL_SPEED_10000 = 10000,
         FAL_SPEED_BUTT  = 0xffff,
     } fal_port_speed_t;
@@ -54,6 +56,7 @@ extern "c" {
 
 #define FAL_ENABLE      1
 #define FAL_DISABLE     0
+#define FAL_MAX_PORT_NUMBER     8
 
 //phy autoneg adv
 #define FAL_PHY_ADV_10T_HD      0x01
@@ -219,6 +222,123 @@ typedef struct {
 } fal_port_counter_info_t;
 
 /*above is new add for malibu phy*/
+
+enum
+{
+	/*port contorl*/
+	FUNC_ADPT_PORT_LOCAL_LOOPBACK_GET = 0,
+	FUNC_ADPT_PORT_AUTONEG_RESTART,
+	FUNC_ADPT_PORT_DUPLEX_SET,
+	FUNC_ADPT_PORT_RXMAC_STATUS_GET,
+	FUNC_ADPT_PORT_CDT,
+	FUNC_ADPT_PORT_TXMAC_STATUS_SET,
+	FUNC_ADPT_PORT_COMBO_FIBER_MODE_SET,
+	FUNC_ADPT_PORT_COMBO_MEDIUM_STATUS_GET,
+	FUNC_ADPT_PORT_MAGIC_FRAME_MAC_SET,
+	FUNC_ADPT_PORT_POWERSAVE_SET,
+	FUNC_ADPT_PORT_HIBERNATE_SET,
+	FUNC_ADPT_PORT_8023AZ_GET,
+	FUNC_ADPT_PORT_RXFC_STATUS_GET,
+	FUNC_ADPT_PORT_TXFC_STATUS_GET,
+	FUNC_ADPT_PORT_REMOTE_LOOPBACK_SET,
+	FUNC_ADPT_PORT_FLOWCTRL_SET,
+	FUNC_ADPT_PORT_MRU_SET,
+	FUNC_ADPT_PORT_AUTONEG_STATUS_GET,
+	FUNC_ADPT_PORT_TXMAC_STATUS_GET,
+	FUNC_ADPT_PORT_MDIX_GET,
+	FUNC_ADPT_PORTS_LINK_STATUS_GET,
+	FUNC_ADPT_PORT_MAC_LOOPBACK_SET,
+	FUNC_ADPT_PORT_PHY_ID_GET,
+	FUNC_ADPT_PORT_MRU_GET,
+	FUNC_ADPT_PORT_POWER_ON,
+	FUNC_ADPT_PORT_SPEED_SET,
+	FUNC_ADPT_PORT_INTERFACE_MODE_GET,
+	FUNC_ADPT_PORT_DUPLEX_GET,
+	FUNC_ADPT_PORT_AUTONEG_ADV_GET,
+	FUNC_ADPT_PORT_MDIX_STATUS_GET,
+	FUNC_ADPT_PORT_MTU_SET,
+	FUNC_ADPT_PORT_LINK_STATUS_GET,
+	FUNC_ADPT_PORT_8023AZ_SET,
+	FUNC_ADPT_PORT_POWERSAVE_GET,
+	FUNC_ADPT_PORT_COMBO_PREFER_MEDIUM_GET,
+	FUNC_ADPT_PORT_COMBO_PREFER_MEDIUM_SET,
+	FUNC_ADPT_PORT_POWER_OFF,
+	FUNC_ADPT_PORT_TXFC_STATUS_SET,
+	FUNC_ADPT_PORT_COUNTER_SET,
+	FUNC_ADPT_PORT_COMBO_FIBER_MODE_GET,
+	FUNC_ADPT_PORT_LOCAL_LOOPBACK_SET,
+	FUNC_ADPT_PORT_WOL_STATUS_SET,
+	FUNC_ADPT_PORT_MAGIC_FRAME_MAC_GET,
+	FUNC_ADPT_PORT_FLOWCTRL_GET,
+	FUNC_ADPT_PORT_RXMAC_STATUS_SET,
+	FUNC_ADPT_PORT_COUNTER_GET,
+	FUNC_ADPT_PORT_INTERFACE_MODE_SET,
+	FUNC_ADPT_PORT_MAC_LOOPBACK_GET,
+	FUNC_ADPT_PORT_HIBERNATE_GET,
+	FUNC_ADPT_PORT_AUTONEG_ADV_SET,
+	FUNC_ADPT_PORT_REMOTE_LOOPBACK_GET,
+	FUNC_ADPT_PORT_COUNTER_SHOW,
+	FUNC_ADPT_PORT_AUTONEG_ENABLE,
+	FUNC_ADPT_PORT_MTU_GET,
+	FUNC_ADPT_PORT_INTERFACE_MODE_STATUS_GET,
+	FUNC_ADPT_PORT_RESET,
+	FUNC_ADPT_PORT_RXFC_STATUS_SET,
+	FUNC_ADPT_PORT_SPEED_GET,
+	FUNC_ADPT_PORT_MDIX_SET,
+	FUNC_ADPT_PORT_WOL_STATUS_GET,
+	FUNC_ADPT_PORT_MAX_FRAME_SIZE_SET,
+	FUNC_ADPT_PORT_MAX_FRAME_SIZE_GET,
+	FUNC_ADPT_PORT_SOURCE_FILTER_GET,
+	FUNC_ADPT_PORT_SOURCE_FILTER_SET,
+};
+
+	typedef enum {
+		MRU_MTU_FORWARD = 0,
+		MRU_MTU_DROP = 1,
+		MRU_MTU_CPYCPU = 2,
+		MRU_MTU_RDTCPU = 3,
+	} fal_mtu_action_t;
+
+	typedef enum {
+		MRU_MRU_FORWARD = 0,
+		MRU_MRU_DROP = 1,
+		MRU_MRU_CPYCPU = 2,
+		MRU_MRU_RDTCPU = 3,
+	} fal_mru_action_t;
+
+	typedef struct {
+		a_uint32_t		mtu_size;
+		fal_mtu_action_t	action;
+	} fal_mtu_ctrl_t;
+
+	typedef struct {
+		a_uint32_t		mru_size;
+		fal_mru_action_t	action;
+	} fal_mru_ctrl_t;
+
+	sw_error_t
+	fal_port_max_frame_size_set(a_uint32_t dev_id, fal_port_t port_id,
+			a_uint32_t max_frame);
+
+	sw_error_t
+	fal_port_max_frame_size_get(a_uint32_t dev_id, fal_port_t port_id,
+			a_uint32_t *max_frame);
+
+	sw_error_t
+	fal_port_mtu_set(a_uint32_t dev_id, fal_port_t port_id,
+			fal_mtu_ctrl_t *ctrl);
+
+	sw_error_t
+	fal_port_mtu_get(a_uint32_t dev_id, fal_port_t port_id,
+			fal_mtu_ctrl_t *ctrl);
+
+	sw_error_t
+	fal_port_mru_set(a_uint32_t dev_id, fal_port_t port_id,
+			fal_mru_ctrl_t *ctrl);
+
+	sw_error_t
+	fal_port_mru_get(a_uint32_t dev_id, fal_port_t port_id,
+			fal_mru_ctrl_t *ctrl);
 
     sw_error_t
     fal_port_duplex_set(a_uint32_t dev_id, fal_port_t port_id,
@@ -518,6 +638,13 @@ typedef struct {
  sw_error_t
 	fal_debug_phycounter_show (a_uint32_t dev_id, fal_port_t port_id,
 				  fal_port_counter_info_t * port_counter_info);
+
+ sw_error_t
+       fal_port_source_filter_enable(a_uint32_t dev_id,
+                       fal_port_t port_id, a_bool_t enable);
+ sw_error_t
+        fal_port_source_filter_status_get(a_uint32_t dev_id,
+                       fal_port_t port_id, a_bool_t * enable);
 
 #ifdef __cplusplus
 }
