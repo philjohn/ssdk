@@ -133,6 +133,8 @@ typedef struct
 	a_uint32_t led_source_num;
 	led_source_cfg_t led_source_cfg[15];
 	a_uint32_t      phy_id;
+	a_uint32_t      mac_mode1;
+	a_uint32_t      mac_mode2;
 } ssdk_init_cfg;
 
 #if defined ATHENA
