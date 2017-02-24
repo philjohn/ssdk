@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014, 2017, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -16,6 +16,7 @@
 #include <signal.h>
 #include <termios.h>
 #include "shell_config.h"
+#include "shell.h"
 
 #define printc(isPrint, fmt, args...) if(isPrint == 1) printf(fmt, ##args)
 
@@ -212,7 +213,7 @@ handle_delete(void)
         return;
 
     /*delete one character from string */
-    strcpy(cmd_strp + cur_tmp, cmd_strp + cur_tmp + 1);
+    strlcpy(cmd_strp + cur_tmp, cmd_strp + cur_tmp + 1, CMDSTR_BUF_SIZE - cur_tmp);
     cmd_strlen--;
 
     /*clear characters after cursor  */
@@ -237,7 +238,7 @@ handle_up(void)
         return;
 
     /*copy current history cmd to out_cmd */
-    strcpy(cmd_strp, history_buf[history_cur]);
+    strlcpy(cmd_strp, history_buf[history_cur], CMDSTR_BUF_SIZE);
 
     /*print out_cmd */
     out_cmd_print();
@@ -252,7 +253,7 @@ handle_down(void)
         return;
 
     /*copy current history cmd to out_cmd */
-    strcpy(cmd_strp, history_buf[history_cur]);
+    strlcpy(cmd_strp, history_buf[history_cur], CMDSTR_BUF_SIZE);
 
     /*print out_cmd */
     out_cmd_print();
@@ -450,16 +451,16 @@ handle_help(void)
 {
     int pmatch_id = GCMD_DESC_NO_MATCH, pmatch_sub_id = GCMD_DESC_NO_MATCH, pmatch_act_id = GCMD_DESC_NO_MATCH;
     int cmd_nr = 0, pmatch_nr = 0, pmatch_sub_nr = 0;
-    char *tmp_str[3], *cmd_strp_cp = strdup(cmd_strp);
+    char *tmp_str[3], *cmd_strp_cp = strdup(cmd_strp), *str_save;
 
     /* split command string into temp array */
-    tmp_str[cmd_nr] = (void *) strtok(cmd_strp_cp, " ");
+    tmp_str[cmd_nr] = (void *) strtok_r(cmd_strp_cp, " ", &str_save);
 
     while (tmp_str[cmd_nr])
     {
         if (++cmd_nr == 3)
             break;
-        tmp_str[cmd_nr] = (void *) strtok(NULL, " ");
+        tmp_str[cmd_nr] = (void *) strtok_r(NULL, " ", &str_save);
     }
 
     /*echo input ? */
@@ -582,22 +583,19 @@ handle_tab(void)
 
     int cmd_nr = 0;
     char matchBuf[MATCH_BUF_MAX];
-    char *tmp_str[3];
+    char *tmp_str[3], *str_save;
 
     memset(matchBuf, 0, MATCH_BUF_MAX);
 
-	if(cmd_cursor < MATCH_BUF_MAX) {
-		strncpy(matchBuf, cmd_strp, cmd_cursor);
-		matchBuf[cmd_cursor] = '\0';
-	} else {
-		strncpy(matchBuf, cmd_strp, MATCH_BUF_MAX-1);
-		matchBuf[MATCH_BUF_MAX-1] = '\0';
-	}
+	if(cmd_cursor < MATCH_BUF_MAX) 
+		strlcpy(matchBuf, cmd_strp, cmd_cursor+1);
+	 else 
+		strlcpy(matchBuf, cmd_strp, MATCH_BUF_MAX);
 
     printf("\n");
 
     /* split command string into temp array */
-    tmp_str[cmd_nr] = (void *) strtok(matchBuf, " ");
+    tmp_str[cmd_nr] = (void *) strtok_r(matchBuf, " ", &str_save);
 
     if(!tmp_str[cmd_nr])
     {
@@ -612,7 +610,7 @@ handle_tab(void)
     {
         if (++cmd_nr == 3)
             break;
-        tmp_str[cmd_nr] = (void *) strtok(NULL, " ");
+        tmp_str[cmd_nr] = (void *) strtok_r(NULL, " ", &str_save);
     }
 
     int is_print = 1, is_completed = 0;

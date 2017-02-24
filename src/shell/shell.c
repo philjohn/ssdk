@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014, 2017, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -21,6 +21,7 @@
 #include "shell_lib.h"
 #include "shell_config.h"
 #include "api_access.h"
+#include "fal_uk_if.h"
 
 a_uint32_t *ioctl_buf;
 ssdk_init_cfg init_cfg = def_init_cfg;
@@ -442,7 +443,7 @@ cmd_parse(char *cmd_str, int *cmd_index, int *cmd_index_sub)
 {
     int cmd_nr = 0;
     a_uint32_t *arg_val = ioctl_argp;
-    char *tmp_str[CMDSTR_ARGS_MAX];
+    char *tmp_str[CMDSTR_ARGS_MAX], *str_save;
 
     if (cmd_str == NULL)
         return NULL;
@@ -450,7 +451,7 @@ cmd_parse(char *cmd_str, int *cmd_index, int *cmd_index_sub)
     memset(arg_val, 0, CMDSTR_ARGS_MAX * sizeof (a_uint32_t));
 
     /* split string into array */
-    if ((tmp_str[cmd_nr] = (void *) strtok(cmd_str, " ")) == NULL)
+    if ((tmp_str[cmd_nr] = (void *) strtok_r(cmd_str, " ", &str_save)) == NULL)
         return NULL;
 
     /*handle help */
@@ -464,7 +465,7 @@ cmd_parse(char *cmd_str, int *cmd_index, int *cmd_index_sub)
     {
         if (++cmd_nr == 3)
             break;
-        tmp_str[cmd_nr] = (void *) strtok(NULL, " ");
+        tmp_str[cmd_nr] = (void *) strtok_r(NULL, " ", &str_save);
     }
 
     /*commond string lookup */
@@ -484,12 +485,12 @@ cmd_parse(char *cmd_str, int *cmd_index, int *cmd_index_sub)
         cmd_nr++;
     }
 
-    tmp_str[cmd_nr] = (void *) strtok(NULL, " ");
+    tmp_str[cmd_nr] = (void *) strtok_r(NULL, " ", &str_save);
     while (tmp_str[cmd_nr])
     {
         if (++cmd_nr == CMDSTR_ARGS_MAX)
             break;
-        tmp_str[cmd_nr] = (void *) strtok(NULL, " ");
+        tmp_str[cmd_nr] = (void *) strtok_r(NULL, " ", &str_save);
     }
 
     arg_val[0] = GCMD_SUB_API(*cmd_index, *cmd_index_sub);
@@ -644,23 +645,23 @@ static sw_error_t
 cmd_run_batch (char *cmd_str)
 {
     FILE *in_fd = NULL;
-    char * line = NULL;
+    char * line = NULL, *str_save;
     char *tmp_str[3];
 
     if (cmd_str == NULL)
         return SW_BAD_PARAM;
 
     /*usage: run cmd result*/
-    if((tmp_str[0] = (void *) strtok(cmd_str, " ")) == NULL)
+    if((tmp_str[0] = (void *) strtok_r(cmd_str, " ", &str_save)) == NULL)
         return SW_BAD_PARAM;
 
     /*check again*/
     if(!cmd_is_batch(tmp_str[0]))
         return SW_BAD_PARAM;
 
-    if((tmp_str[1] = (void *) strtok(NULL, " "))== NULL)
+    if((tmp_str[1] = (void *) strtok_r(NULL, " ", &str_save))== NULL)
         return SW_BAD_PARAM;
-    if((tmp_str[2] = (void *) strtok(NULL, " "))== NULL)
+    if((tmp_str[2] = (void *) strtok_r(NULL, " ", &str_save))== NULL)
         return SW_BAD_PARAM;
 
     if((in_fd = fopen(tmp_str[1], "r")) == NULL)
@@ -724,7 +725,7 @@ cmd_args(char *cmd_str, int argc, const char *argv[])
             return SW_FAIL;
         }
 
-        sprintf(cmd_str, "%s %s %s", argv[1], argv[2], argv[3]);
+        snprintf(cmd_str, CMDSTR_BUF_SIZE, "%s %s %s", argv[1], argv[2], argv[3]);
         cmd_run_batch(cmd_str);
 
     }
@@ -733,8 +734,8 @@ cmd_args(char *cmd_str, int argc, const char *argv[])
         int argi;
         for(argi = 1; argi < argc; argi++)
         {
-            strcat(cmd_str, argv[argi]);
-            strcat(cmd_str, " ");
+            strlcat(cmd_str, argv[argi], CMDSTR_BUF_SIZE);
+            strlcat(cmd_str, " ", CMDSTR_BUF_SIZE);
         }
         cmd_run_one(cmd_str);
     }

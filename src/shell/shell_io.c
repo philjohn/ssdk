@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, 2015, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014, 2015, 2017, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -542,11 +542,8 @@ cmd_data_print_register_info(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_
 {
     dprintf("\n[%s]", param_name);
 	fal_reg_dump_t * reg_dump = (fal_reg_dump_t * )buf;
-
 	a_uint32_t n[8]={0,4,8,0xc,0x10,0x14,0x18,0x1c};
-
-	a_uint32_t i;
-	a_uint32_t dump_addr, reg_count, reg_val;
+	a_uint32_t dump_addr, reg_count;
 
 	dprintf("\n%s. ", reg_dump->reg_name);
 	dprintf("\n	%8x %8x %8x %8x %8x %8x %8x %8x\n",
@@ -576,7 +573,7 @@ cmd_data_print_phy_register_info(a_uint8_t * param_name, a_uint32_t * buf, a_uin
 	a_uint32_t n[8]={0,1,2,3,4,5,6,7};
 
 	a_uint32_t i;
-	a_uint32_t dump_addr, reg_count, reg_val;
+	a_uint32_t dump_addr, reg_count;
 
 	dprintf("\n%s. ", phy_dump->phy_name);
 	dprintf("\n	%8x %8x %8x %8x %8x %8x %8x %8x\n",
@@ -1634,11 +1631,11 @@ cmd_data_print_leaky(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 sw_error_t
 cmd_data_check_uinta(char *cmdstr, a_uint32_t * val, a_uint32_t size)
 {
-    char *tmp_str = NULL;
+    char *tmp_str = NULL, *str_save;
     a_uint32_t *tmp_ptr = val;
     a_uint32_t i = 0;
 
-    tmp_str = (void *) strtok(cmdstr, ",");
+    tmp_str = (void *) strtok_r(cmdstr, ",", &str_save);
     while (tmp_str)
     {
         if (i >= (size / 4))
@@ -1650,7 +1647,7 @@ cmd_data_check_uinta(char *cmdstr, a_uint32_t * val, a_uint32_t size)
         tmp_ptr++;
 
         i++;
-        tmp_str = (void *) strtok(NULL, ",");
+        tmp_str = (void *) strtok_r(NULL, ",", &str_save);
     }
 
     if (i != (size / 4))
@@ -1909,7 +1906,7 @@ cmd_data_print_confirm(char * param_name, a_bool_t val, a_uint32_t size)
 sw_error_t
 cmd_data_check_portmap(char *cmdstr, fal_pbmp_t * val, a_uint32_t size)
 {
-    char *tmp = NULL;
+    char *tmp = NULL, *str_save;
     a_uint32_t i = 0;
     a_uint32_t port;
 
@@ -1920,7 +1917,7 @@ cmd_data_check_portmap(char *cmdstr, fal_pbmp_t * val, a_uint32_t size)
         return SW_OK;
     }
 
-    tmp = (void *) strtok(cmdstr, ",");
+    tmp = (void *) strtok_r(cmdstr, ",", &str_save);
     while (tmp)
     {
         if (SW_MAX_NR_PORT <= i)
@@ -1935,7 +1932,7 @@ cmd_data_check_portmap(char *cmdstr, fal_pbmp_t * val, a_uint32_t size)
         }
 
         *val |= (0x1 << port);
-        tmp = (void *) strtok(NULL, ",");
+        tmp = (void *) strtok_r(NULL, ",", &str_save);
     }
 
     return SW_OK;
@@ -1954,9 +1951,9 @@ cmd_data_print_portmap(char * param_name, fal_pbmp_t val, a_uint32_t size)
         if (val & (0x1 << i))
         {
             if(strlen(tmp) == 0)
-                sprintf(tmp, "%d", i);
+                snprintf(tmp, sizeof(tmp), "%d", i);
             else
-                sprintf(tmp+strlen(tmp), ",%d", i);
+                snprintf(tmp+strlen(tmp), sizeof(tmp+strlen(tmp)), ",%d", i);
         }
     }
     dprintf("%s ", tmp);
@@ -1966,7 +1963,7 @@ cmd_data_print_portmap(char * param_name, fal_pbmp_t val, a_uint32_t size)
 sw_error_t
 cmd_data_check_macaddr(char *cmdstr, void *val, a_uint32_t size)
 {
-    char *tmp = NULL;
+    char *tmp = NULL, *str_save;
     a_uint32_t i = 0, j;
     a_uint32_t addr;
     fal_mac_addr_t mac;
@@ -1984,7 +1981,7 @@ cmd_data_check_macaddr(char *cmdstr, void *val, a_uint32_t size)
         return SW_OK;
     }
 
-    tmp = (void *) strtok(cmdstr, "-");
+    tmp = (void *) strtok_r(cmdstr, "-", &str_save);
     while (tmp)
     {
         if (6 <= i)
@@ -2010,7 +2007,7 @@ cmd_data_check_macaddr(char *cmdstr, void *val, a_uint32_t size)
         }
 
         mac.uc[i++] = addr;
-        tmp = (void *) strtok(NULL, "-");
+        tmp = (void *) strtok_r(NULL, "-", &str_save);
     }
 
     if (6 != i)
@@ -2711,7 +2708,7 @@ cmd_data_print_fieldop(char * param_name, a_uint32_t * buf,
 sw_error_t
 cmd_data_check_ip4addr(char *cmdstr, void * val, a_uint32_t size)
 {
-    char *tmp = NULL;
+    char *tmp = NULL, *str_save;
     a_uint32_t i = 0, j;
     a_uint32_t addr;
     fal_ip4_addr_t ip4;
@@ -2746,7 +2743,7 @@ cmd_data_check_ip4addr(char *cmdstr, void * val, a_uint32_t size)
 
 	/* make sure the string can be terminated */
 	cmd[i] = '\0';
-    tmp = (void *) strtok(cmd, ".");
+    tmp = (void *) strtok_r(cmd, ".", &str_save);
     i = 0;
     while (tmp)
     {
@@ -2776,7 +2773,7 @@ cmd_data_check_ip4addr(char *cmdstr, void * val, a_uint32_t size)
 
         ip4 |= ((addr & 0xff) << (24 - i * 8));
         i++;
-        tmp = (void *) strtok(NULL, ".");
+        tmp = (void *) strtok_r(NULL, ".", &str_save);
     }
 
     if (4 != i)
@@ -2966,7 +2963,7 @@ cmd_data_print_multi(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 sw_error_t
 cmd_data_check_ip6addr(char *cmdstr, void * val, a_uint32_t size)
 {
-    char *tmp = NULL;
+    char *tmp = NULL, *str_save;
     a_uint32_t j;
     a_uint32_t i = 0, cnt = 0, rep = 0, loc = 0;
     a_uint32_t data;
@@ -3012,7 +3009,7 @@ cmd_data_check_ip6addr(char *cmdstr, void * val, a_uint32_t size)
         return SW_BAD_VALUE;
     }
 
-    tmp = (void *) strtok(cmdstr, ":");
+    tmp = (void *) strtok_r(cmdstr, ":", &str_save);
     i = 0;
     while (tmp)
     {
@@ -3041,7 +3038,7 @@ cmd_data_check_ip6addr(char *cmdstr, void * val, a_uint32_t size)
         }
 
         addr[i++] = data;
-        tmp = (void *) strtok(NULL, ":");
+        tmp = (void *) strtok_r(NULL, ":", &str_save);
     }
 
     if (0 == rep)
@@ -4022,7 +4019,7 @@ cmd_data_print_udf_type(char * param_name, a_uint32_t * buf,
 sw_error_t
 cmd_data_check_udf_element(char *cmdstr, a_uint8_t * val, a_uint32_t * len)
 {
-    char *tmp = NULL;
+    char *tmp = NULL, *str_save;
     a_uint32_t i = 0, j;
     a_uint32_t data;
 
@@ -4037,7 +4034,7 @@ cmd_data_check_udf_element(char *cmdstr, a_uint8_t * val, a_uint32_t * len)
         return SW_BAD_VALUE;
     }
 
-    tmp = (void *) strtok(cmdstr, "-");
+    tmp = (void *) strtok_r(cmdstr, "-", &str_save);
     while (tmp)
     {
         if (16 <= i)
@@ -4061,7 +4058,7 @@ cmd_data_check_udf_element(char *cmdstr, a_uint8_t * val, a_uint32_t * len)
         sscanf(tmp, "%x", &data);
 
         val[i++] = data & 0xff;
-        tmp = (void *) strtok(NULL, "-");
+        tmp = (void *) strtok_r(NULL, "-", &str_save);
     }
 
     if (0 == i)
@@ -10531,7 +10528,6 @@ sw_error_t
 cmd_data_check_default_route_entry(char *cmd_str, void * val, a_uint32_t size)
 {
     char *cmd;
-    a_uint32_t tmp;
     sw_error_t rv;
     fal_default_route_t entry;
 
@@ -10672,7 +10668,6 @@ sw_error_t
 cmd_data_check_host_route_entry(char *cmd_str, void * val, a_uint32_t size)
 {
     char *cmd;
-    a_uint32_t tmp;
     sw_error_t rv;
     fal_host_route_t entry;
 
@@ -10812,16 +10807,12 @@ cmd_data_print_host_route_entry(a_uint8_t * param_name, a_uint32_t * buf, a_uint
                                (a_uint32_t *) & (entry->route_addr.ip6_addr),
                                sizeof (fal_ip6_addr_t));
     }
-    else
-    {
-        return SW_BAD_VALUE;
-    }
 }
 
 sw_error_t
 cmd_data_check_array(char *cmdstr, void *val, a_uint32_t size)
 {
-    char *tmp = NULL;
+    char *tmp = NULL, *str_save;
     a_uint32_t i = 0, j;
     a_uint32_t addr;
     int *dst = (int*)val;
@@ -10836,7 +10827,7 @@ cmd_data_check_array(char *cmdstr, void *val, a_uint32_t size)
         return SW_OK;
     }
 
-    tmp = (void *) strtok(cmdstr, "-");
+    tmp = (void *) strtok_r(cmdstr, "-", &str_save);
     while (tmp)
     {
         if (size <= i)
@@ -10862,7 +10853,7 @@ cmd_data_check_array(char *cmdstr, void *val, a_uint32_t size)
         }
 
         dst[i++] = addr;
-        tmp = (void *) strtok(NULL, "-");
+        tmp = (void *) strtok_r(NULL, "-", &str_save);
     }
 
     if (size != i)
@@ -10879,10 +10870,8 @@ cmd_data_check_ip_wcmp_entry(char *cmd_str, void * val, a_uint32_t size)
 {
 	
 	char *cmd;
-	a_uint32_t tmp = 0;
 	sw_error_t rv;
 	fal_ip_wcmp_t entry;
-	char buf[12] ={0};
 
 	aos_mem_zero(&entry, sizeof (fal_ip_wcmp_t));
 	
@@ -10964,7 +10953,6 @@ cmd_data_print_ip_wcmp_entry(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_
 sw_error_t
 cmd_data_check_ip4_rfs_entry(char *cmd_str, void * val, a_uint32_t size)
 {
-	char *cmd;
 	a_uint32_t tmp;
 	sw_error_t rv;
 	fal_ip4_rfs_t entry;
@@ -11006,7 +10994,6 @@ cmd_data_check_ip4_rfs_entry(char *cmd_str, void * val, a_uint32_t size)
 sw_error_t
 cmd_data_check_fdb_rfs(char *cmd_str, void * val, a_uint32_t size)
 {
-	char *cmd;
 	a_uint32_t tmp;
 	sw_error_t rv;
 	fal_fdb_rfs_t entry;
@@ -11045,8 +11032,6 @@ cmd_data_check_fdb_rfs(char *cmd_str, void * val, a_uint32_t size)
 sw_error_t
 cmd_data_check_flow_cookie(char *cmd_str, void * val, a_uint32_t size)
 {
-	char *cmd;
-	a_uint32_t tmp;
 	sw_error_t rv;
 	fal_flow_cookie_t entry;
 
@@ -11102,7 +11087,6 @@ cmd_data_check_flow_cookie(char *cmd_str, void * val, a_uint32_t size)
 sw_error_t
 cmd_data_check_flow_rfs(char *cmd_str, void * val, a_uint32_t size)
 {
-	char *cmd;
 	a_uint32_t tmp;
 	sw_error_t rv;
 	fal_flow_rfs_t entry;
@@ -11161,7 +11145,6 @@ cmd_data_check_flow_rfs(char *cmd_str, void * val, a_uint32_t size)
 sw_error_t
 cmd_data_check_ip6_rfs_entry(char *cmd_str, void * val, a_uint32_t size)
 {
-	char *cmd;
 	a_uint32_t tmp;
 	sw_error_t rv;
 	fal_ip6_rfs_t entry;
