@@ -565,7 +565,7 @@ cmd_exec(a_uint32_t *arg_val, int cmd_index, int cmd_index_sub)
     if(rtn != SW_OK)
         cmd_print_error(rtn);
     else
-        dprintf("\noperate done.\n\n");
+        dprintf("\noperation done.\n\n");
 
     return 0;
 }

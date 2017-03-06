@@ -4389,34 +4389,6 @@ cmd_data_check_ip6_field(fal_acl_rule_t * entry)
         FAL_FIELD_FLG_SET(entry->field_flg, FAL_ACL_FIELD_DHCPV6);
     }
 
-    /* get ah header field configuration */
-    cmd_data_check_element("ah header field", "no", "usage: <yes/no/y/n>\n",
-                           cmd_data_check_confirm, (cmd, A_FALSE, &tmpdata,
-                                   sizeof (tmpdata)));
-
-    if (tmpdata)
-    {
-            entry->is_ah_header_mask = 1;
-	    cmd_data_check_element("Is AH header", "no", "usage: <yes/no/y/n>\n",
-	                           cmd_data_check_confirm, (cmd, A_FALSE, &entry->is_ah_header_val,
-	                                   sizeof (a_bool_t)));
-            FAL_FIELD_FLG_SET(entry->field_flg, FAL_ACL_FIELD_AH_HEADER);
-    }
-
-    /* get esp header field configuration */
-    cmd_data_check_element("esp header field", "no", "usage: <yes/no/y/n>\n",
-                           cmd_data_check_confirm, (cmd, A_FALSE, &tmpdata,
-                                   sizeof (tmpdata)));
-
-    if (tmpdata)
-    {
-            entry->is_esp_header_mask = 1;
-	    cmd_data_check_element("Is ESP header", "no", "usage: <yes/no/y/n>\n",
-	                           cmd_data_check_confirm, (cmd, A_FALSE, &entry->is_esp_header_val,
-	                                   sizeof (a_bool_t)));
-            FAL_FIELD_FLG_SET(entry->field_flg, FAL_ACL_FIELD_ESP_HEADER);
-    }
-
     /* get mobility header field configuration */
     cmd_data_check_element("mobility header field", "no", "usage: <yes/no/y/n>\n",
                            cmd_data_check_confirm, (cmd, A_FALSE, &tmpdata,
@@ -4838,6 +4810,34 @@ cmd_data_check_ip_field(fal_acl_rule_t * entry)
             entry->l3_pkt_type = tmpdata & 0x7;
 
             FAL_FIELD_FLG_SET(entry->field_flg, FAL_ACL_FIELD_IP_PKT_TYPE);
+    }
+
+    /* get ah header field configuration */
+    cmd_data_check_element("ah header field", "no", "usage: <yes/no/y/n>\n",
+                           cmd_data_check_confirm, (cmd, A_FALSE, &tmpdata,
+                                   sizeof (tmpdata)));
+
+    if (tmpdata)
+    {
+            entry->is_ah_header_mask = 1;
+	    cmd_data_check_element("Is AH header", "no", "usage: <yes/no/y/n>\n",
+	                           cmd_data_check_confirm, (cmd, A_FALSE, &entry->is_ah_header_val,
+	                                   sizeof (a_bool_t)));
+            FAL_FIELD_FLG_SET(entry->field_flg, FAL_ACL_FIELD_AH_HEADER);
+    }
+
+    /* get esp header field configuration */
+    cmd_data_check_element("esp header field", "no", "usage: <yes/no/y/n>\n",
+                           cmd_data_check_confirm, (cmd, A_FALSE, &tmpdata,
+                                   sizeof (tmpdata)));
+
+    if (tmpdata)
+    {
+            entry->is_esp_header_mask = 1;
+	    cmd_data_check_element("Is ESP header", "no", "usage: <yes/no/y/n>\n",
+	                           cmd_data_check_confirm, (cmd, A_FALSE, &entry->is_esp_header_val,
+	                                   sizeof (a_bool_t)));
+            FAL_FIELD_FLG_SET(entry->field_flg, FAL_ACL_FIELD_ESP_HEADER);
     }
 
     return SW_OK;
@@ -5868,7 +5868,7 @@ cmd_data_check_aclrule(char *info, void *val, a_uint32_t size)
     memset(&entry, 0, sizeof (fal_acl_rule_t));
 
     dprintf("\n");
-    g_aclcmd_len = sprintf(g_aclcmd, "ssdk_sh acl rule add 11 3 1 ");
+    g_aclcmd_len = sprintf(g_aclcmd, "ssdk_sh acl rule add xx xx 1 ");
 
     cmd_data_check_element("post routing enable", "no",
                            "usage: <yes/no/y/n>\n", cmd_data_check_confirm,
@@ -5962,8 +5962,7 @@ cmd_data_check_aclrule(char *info, void *val, a_uint32_t size)
     {
         return rv;
     }
-printf("\n %s \n", g_aclcmd);
-sleep(1);
+    //printf("\n %s \n", g_aclcmd);
     *(fal_acl_rule_t *) val = entry;
     return SW_OK;
 }
@@ -6004,7 +6003,7 @@ cmd_data_print_aclrule(char * param_name, a_uint32_t * buf,
                             sizeof (fal_acl_rule_type_t));
 
     dprintf("\n[priority]:0x%x", rule->pri);
-    dprintf("\n[post_routing_en]:0x%x", rule->post_routing);
+    cmd_data_print_confirm("\n[post_routing_en]:", rule->post_routing, sizeof(a_uint32_t));
     dprintf("\n[res_chain]:0x%x", rule->res_chain);
 
     if (FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_FAKE_MAC_HEADER))
@@ -13790,7 +13789,7 @@ cmd_data_check_u_qmap(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("src profile", "0");
+        cmd = get_sub_cmd("src_profile", "0");
 		SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -13813,7 +13812,7 @@ cmd_data_check_u_qmap(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("srv code en", "enable");
+        cmd = get_sub_cmd("service_code_en", "no");
 		SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -13822,21 +13821,21 @@ cmd_data_check_u_qmap(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.service_code_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.service_code_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("srv code", "0");
+        cmd = get_sub_cmd("service_code", "0");
 		SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -13859,7 +13858,7 @@ cmd_data_check_u_qmap(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("cpu code en", "enable");
+        cmd = get_sub_cmd("cpu_code_en", "no");
 		SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -13868,21 +13867,21 @@ cmd_data_check_u_qmap(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.cpu_code_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.cpu_code_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("cpu code", "0");
+        cmd = get_sub_cmd("cpu_code", "0");
 		SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -13905,7 +13904,7 @@ cmd_data_check_u_qmap(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("dst port", "0");
+        cmd = get_sub_cmd("dst_port", "0");
 		SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -14659,7 +14658,7 @@ cmd_data_check_intf(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("ttl dec bypass", "enable");
+        cmd = get_sub_cmd("ttl_dec_bypass_en", "no");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -14668,21 +14667,21 @@ cmd_data_check_intf(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ttl_dec_bypass_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.ttl_dec_bypass_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("ipv4 uc route en", "enable");
+        cmd = get_sub_cmd("ipv4_uc_route_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -14691,21 +14690,21 @@ cmd_data_check_intf(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ipv4_uc_route_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.ipv4_uc_route_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("ipv6 uc route en", "enable");
+        cmd = get_sub_cmd("ipv6_uc_route_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -14714,21 +14713,21 @@ cmd_data_check_intf(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ipv6_uc_route_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.ipv6_uc_route_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("icmp trigger en", "enable");
+        cmd = get_sub_cmd("icmp_trigger_en", "no");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -14737,21 +14736,21 @@ cmd_data_check_intf(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.icmp_trigger_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.icmp_trigger_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("ttl exceed cmd", "forward");
+        cmd = get_sub_cmd("ttl_exceed_action", "forward");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -14776,7 +14775,7 @@ cmd_data_check_intf(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("ttl exceed deaclr", "enable");
+        cmd = get_sub_cmd("ttl_exceed_deacclr_en", "no");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -14785,21 +14784,21 @@ cmd_data_check_intf(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ttl_exceed_deacclr_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.ttl_exceed_deacclr_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("macaddr bitmap", "0");
+        cmd = get_sub_cmd("mac_addr_bitmap", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -14820,7 +14819,7 @@ cmd_data_check_intf(char *cmd_str, void * val, a_uint32_t size)
     }
     while (talk_mode && (SW_OK != rv));
 
-    cmd_data_check_element("mac addr", NULL,
+    cmd_data_check_element("mac_addr", NULL,
                            "usage: the format is xx-xx-xx-xx-xx-xx \n",
                            cmd_data_check_macaddr, (cmd, &(entry.mac_addr),
                                    sizeof (fal_mac_addr_t)));
@@ -14841,7 +14840,7 @@ cmd_data_check_flow_age(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("age time", "0");
+        cmd = get_sub_cmd("age_time", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -14864,7 +14863,7 @@ cmd_data_check_flow_age(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("age unit", "0");
+        cmd = get_sub_cmd("age_unit", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -14902,7 +14901,7 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("color en", "enable");
+        cmd = get_sub_cmd("color_en", "no");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -14911,14 +14910,14 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.color_enable), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.color_enable), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -14926,7 +14925,7 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("wred en", "enable");
+        cmd = get_sub_cmd("wred_en", "no");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -14935,21 +14934,21 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.wred_enable), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.wred_enable), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("weight", "0");
+        cmd = get_sub_cmd("shared_weight", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -14972,7 +14971,7 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("green min off", "0");
+        cmd = get_sub_cmd("green_min_off", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -14995,7 +14994,7 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("yel max off", "0");
+        cmd = get_sub_cmd("yel_max_off", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15018,7 +15017,7 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("yel min off", "0");
+        cmd = get_sub_cmd("yel_min_off", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15041,7 +15040,7 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("red max off", "0");
+        cmd = get_sub_cmd("red_max_off", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15064,7 +15063,7 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("red min off", "0");
+        cmd = get_sub_cmd("red_min_off", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15087,7 +15086,7 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("green resume off", "0");
+        cmd = get_sub_cmd("green_resume_off", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15110,7 +15109,7 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("yellow resume off", "0");
+        cmd = get_sub_cmd("yel_resume_off", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15133,7 +15132,7 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("red resume off", "0");
+        cmd = get_sub_cmd("red_resume_off", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15191,7 +15190,7 @@ cmd_data_check_ac_group_buff(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("prealloc buffer", "0");
+        cmd = get_sub_cmd("prealloc_buffer", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15214,7 +15213,7 @@ cmd_data_check_ac_group_buff(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("total buffer", "0");
+        cmd = get_sub_cmd("total_buffer", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15249,7 +15248,7 @@ cmd_data_check_ac_ctrl(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("ac en", "enable");
+        cmd = get_sub_cmd("ac_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15258,21 +15257,21 @@ cmd_data_check_ac_ctrl(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ac_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.ac_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("ac fc en", "enable");
+        cmd = get_sub_cmd("ac_fc-en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15281,14 +15280,14 @@ cmd_data_check_ac_ctrl(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ac_fc_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.ac_fc_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -15307,7 +15306,7 @@ cmd_data_check_ac_obj(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("obj type", "0");
+        cmd = get_sub_cmd("obj_type", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15330,7 +15329,7 @@ cmd_data_check_ac_obj(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("obj id", "0");
+        cmd = get_sub_cmd("obj_id", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15367,7 +15366,7 @@ cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("color en", "enable");
+        cmd = get_sub_cmd("color_en", "no");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15376,14 +15375,14 @@ cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.color_enable), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.color_enable), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -15391,7 +15390,7 @@ cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("wred en", "enable");
+        cmd = get_sub_cmd("wred_en", "no");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15400,21 +15399,21 @@ cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.wred_enable), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.wred_enable), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("green max", "0");
+        cmd = get_sub_cmd("green_max", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15437,7 +15436,7 @@ cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("green min off", "0");
+        cmd = get_sub_cmd("green_min_off", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15460,7 +15459,7 @@ cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("yel max off", "0");
+        cmd = get_sub_cmd("yel_max_off", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15483,7 +15482,7 @@ cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("yel min off", "0");
+        cmd = get_sub_cmd("yel_min_off", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15499,14 +15498,14 @@ cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size)
         {
             rv = cmd_data_check_uint16(cmd, &(entry.yel_min_off), sizeof (a_uint16_t));
             if (SW_OK != rv)
-                dprintf("usage: green min offset \n");
+                dprintf("usage: yel min offset \n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("red max off", "0");
+        cmd = get_sub_cmd("red_max_off", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15529,7 +15528,7 @@ cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("red min off", "0");
+        cmd = get_sub_cmd("red_min_off", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15552,7 +15551,7 @@ cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("green resume off", "0");
+        cmd = get_sub_cmd("green_resume_off", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15575,7 +15574,7 @@ cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("yellow resume off", "0");
+        cmd = get_sub_cmd("yel_resume_off", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15598,7 +15597,7 @@ cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("red resume off", "0");
+        cmd = get_sub_cmd("red_resume_off", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15636,7 +15635,7 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("mru fail action", "forward");
+        cmd = get_sub_cmd("mru_fail_action", "forward");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15661,7 +15660,7 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("mru deaclr", "enable");
+        cmd = get_sub_cmd("mru_deacclr_en", "no");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15670,15 +15669,15 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.mru_deacclr_en),
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.mru_deacclr_en),
                                        sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
 
     }
@@ -15686,7 +15685,7 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("mtu fail action", "forward");
+        cmd = get_sub_cmd("mtu_fail_action", "forward");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15711,7 +15710,7 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("mtu deaclr", "enable");
+        cmd = get_sub_cmd("mtu_deacclr_en", "no");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15720,15 +15719,15 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.mtu_deacclr_en),
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.mtu_deacclr_en),
                                        sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
 
     }
@@ -15736,7 +15735,7 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("mtu nonfrag fail action", "forward");
+        cmd = get_sub_cmd("mtu_nonfrag_fail_action", "forward");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15761,7 +15760,7 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("mtu nonfrag deaclr", "enable");
+        cmd = get_sub_cmd("mtu_nonfrag_deacclr", "no");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15770,15 +15769,15 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.mtu_df_deacclr_en),
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.mtu_df_deacclr_en),
                                        sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
 
     }
@@ -15786,7 +15785,7 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("prefix bc action", "forward");
+        cmd = get_sub_cmd("prefix_bc_action", "forward");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15811,7 +15810,7 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("prefix bc deaclr", "enable");
+        cmd = get_sub_cmd("prefix_bc_deacclr", "no");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15820,15 +15819,15 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.prefix_deacclr_en),
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.prefix_deacclr_en),
                                        sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
 
     }
@@ -15836,7 +15835,7 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("icmp rdt action", "forward");
+        cmd = get_sub_cmd("icmp_rdt_action", "forward");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15861,7 +15860,7 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("icmp rdt deaclr", "enable");
+        cmd = get_sub_cmd("icmp_rdt_deacclr_en", "no");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15870,15 +15869,15 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.icmp_rdt_deacclr_en),
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.icmp_rdt_deacclr_en),
                                        sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
 
     }
@@ -15886,7 +15885,7 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("hash mode 0", "0");
+        cmd = get_sub_cmd("hash_mode_0", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15903,7 +15902,7 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
             rv = cmd_data_check_uint8(cmd, &(entry.hash_mode_0),
                                        sizeof (a_uint8_t));
             if (SW_OK != rv)
-                dprintf("usage: 0 for disable and 1 for enable\n");
+                dprintf("usage: hash mode\n");
         }
 
     }
@@ -15911,7 +15910,7 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("hash mode 1", "0");
+        cmd = get_sub_cmd("hash_mode_1", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -15928,7 +15927,7 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
             rv = cmd_data_check_uint8(cmd, &(entry.hash_mode_1),
                                        sizeof (a_uint8_t));
             if (SW_OK != rv)
-                dprintf("usage: 0 for disable and 1 for enable\n");
+                dprintf("usage: hash mode\n");
         }
 
     }
@@ -15946,9 +15945,9 @@ cmd_data_print_ip_global(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t si
 
     entry = (fal_ip_global_cfg_t *) buf;
 
-    dprintf("\n[mru_fail]:0x%x [mru_de_acce]:0x%x [mtu_fail]:0x%x [mtu_de_acce]:0x%x [mtu_df_fail]:0x%x ",
+    dprintf("\n[mru_fail_action]:0x%x [mru_deacclr_en]:0x%x [mtu_fail_action]:0x%x [mtu_deacclr_en]:0x%x [mtu_nonfrag_fail_action]:0x%x ",
 			entry->mru_fail_action, entry->mru_deacclr_en, entry->mtu_fail_action, entry->mtu_deacclr_en, entry->mtu_nonfrag_fail_action);
-    dprintf("\n[mtu_df_de_acce]:0x%x [prefix_bc]:0x%x [prefix_de_acce]:0x%x [icmp_rdt]:0x%x [icmp_rdt_de_acce]:0x%x ",
+    dprintf("\n[mtu_df_deacclr_en]:0x%x [prefix_bc_action]:0x%x [prefix_bc_deacclr_en]:0x%x [icmp_rdt_action]:0x%x [icmp_rdt_deacclr]:0x%x ",
 			entry->mtu_df_deacclr_en, entry->prefix_bc_action, entry->prefix_deacclr_en, entry->icmp_rdt_action, entry->icmp_rdt_deacclr_en);
     dprintf("\n[hash_mode_0]:0x%x [hash_mode_1]:0x%x ",
 			entry->hash_mode_0, entry->hash_mode_1);
@@ -16487,7 +16486,7 @@ cmd_data_check_exp_ctrl(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("exp cmd", "forward");
+        cmd = get_sub_cmd("excep_cmd", "forward");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -16512,7 +16511,7 @@ cmd_data_check_exp_ctrl(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("de acce en", "0");
+        cmd = get_sub_cmd("deacclr_en", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -16526,7 +16525,7 @@ cmd_data_check_exp_ctrl(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.de_acce_en),
+            rv = cmd_data_check_uint8(cmd, &(entry.deacclr_en),
                                        sizeof (a_uint8_t));
             if (SW_OK != rv)
                 dprintf("usage: 0 for disable and 1 for enable\n");
@@ -16537,7 +16536,7 @@ cmd_data_check_exp_ctrl(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("l3 only en", "0");
+        cmd = get_sub_cmd("l3_only_en", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -16562,7 +16561,7 @@ cmd_data_check_exp_ctrl(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("l2 only en", "0");
+        cmd = get_sub_cmd("l2_onl_ en", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -16587,7 +16586,7 @@ cmd_data_check_exp_ctrl(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("l2 flow en", "0");
+        cmd = get_sub_cmd("l2_flow_en", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -16612,7 +16611,7 @@ cmd_data_check_exp_ctrl(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("l3 flow en", "0");
+        cmd = get_sub_cmd("l3_flow_en", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -16637,7 +16636,7 @@ cmd_data_check_exp_ctrl(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("multicast en", "0");
+        cmd = get_sub_cmd("multicast_en", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -16671,8 +16670,8 @@ cmd_data_print_exp_ctrl(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t siz
 
     entry = (fal_l3_excep_ctrl_t *) buf;
     
-    dprintf("\n[cmd]:0x%x [de_acce_en]:0x%x [l3_only_en]:0x%x [l2_only_en]:0x%x ",
-			entry->cmd, entry->de_acce_en, entry->l3_only_en, entry->l2_only_en);
+    dprintf("\n[except_cmd]:0x%x [deacclr_en]:0x%x [l3_only_en]:0x%x [l2_only_en]:0x%x ",
+			entry->cmd, entry->deacclr_en, entry->l3_only_en, entry->l2_only_en);
     dprintf("\n[l3_flow_en]:0x%x [l2_flow_en]:0x%x [multicast_en]:0x%x ",
 			entry->l3_flow_en, entry->l2_flow_en, entry->multicast_en);
 }
@@ -16689,7 +16688,7 @@ cmd_data_check_port_group(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("pcp group", "0");
+        cmd = get_sub_cmd("pcp_group", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -16714,7 +16713,7 @@ cmd_data_check_port_group(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("dscp group", "0");
+        cmd = get_sub_cmd("dscp_group", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -16739,7 +16738,7 @@ cmd_data_check_port_group(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("flow group", "0");
+        cmd = get_sub_cmd("flow_group", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -16789,7 +16788,7 @@ cmd_data_check_port_pri(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("pcp pri", "0");
+        cmd = get_sub_cmd("pcp_pri_prece", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -16814,7 +16813,7 @@ cmd_data_check_port_pri(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("dscp pri", "0");
+        cmd = get_sub_cmd("dscp_pri_prece", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -16839,7 +16838,7 @@ cmd_data_check_port_pri(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("preheader pri", "0");
+        cmd = get_sub_cmd("preheader_pri_prece", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -16864,7 +16863,7 @@ cmd_data_check_port_pri(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("flow pri", "0");
+        cmd = get_sub_cmd("flow_pri_prece", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -16889,7 +16888,7 @@ cmd_data_check_port_pri(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("acl pri", "0");
+        cmd = get_sub_cmd("acl_pri_prece", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -16923,9 +16922,9 @@ cmd_data_print_port_pri(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t siz
 
     entry = (fal_qos_pri_precedence_t *) buf;
     
-    dprintf("\n[pcp_pri]:0x%x [dscp_pri]:0x%x [preheader_pri]:0x%x ",
+    dprintf("\n[pcp_pri_prece]:0x%x [dscp_pri_prece]:0x%x [preheader_pri_prece]:0x%x ",
 			entry->pcp_pri, entry->dscp_pri, entry->preheader_pri);
-    dprintf("\n[flow_pri]:0x%x [acl_pri]:0x%x ",
+    dprintf("\n[flow_pri_prece]:0x%x [acl_pri_prece]:0x%x ",
 			entry->flow_pri, entry->acl_pri);
 }
 
@@ -16941,7 +16940,7 @@ cmd_data_check_port_remark(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("pcp change en", "enable");
+        cmd = get_sub_cmd("pcp_change_en", "no");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -16950,15 +16949,15 @@ cmd_data_check_port_remark(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.pcp_change_en),
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.pcp_change_en),
                                        sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
 
     }
@@ -16966,7 +16965,7 @@ cmd_data_check_port_remark(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("dei change en", "enable");
+        cmd = get_sub_cmd("dei_change_en", "no");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -16975,15 +16974,15 @@ cmd_data_check_port_remark(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.dei_chage_en),
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.dei_chage_en),
                                        sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
 
     }
@@ -16991,7 +16990,7 @@ cmd_data_check_port_remark(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("dscp change en", "enable");
+        cmd = get_sub_cmd("dscp_change_en", "no");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17000,15 +16999,15 @@ cmd_data_check_port_remark(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.dscp_change_en),
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.dscp_change_en),
                                        sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
 
     }
@@ -17041,7 +17040,7 @@ cmd_data_check_cosmap(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("internal pcp", "0");
+        cmd = get_sub_cmd("internal_pcp", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17066,7 +17065,7 @@ cmd_data_check_cosmap(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("internal dei", "0");
+        cmd = get_sub_cmd("internal_dei", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17091,7 +17090,7 @@ cmd_data_check_cosmap(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("internal pri", "0");
+        cmd = get_sub_cmd("internal_pri", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17116,7 +17115,7 @@ cmd_data_check_cosmap(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("internal dscp", "0");
+        cmd = get_sub_cmd("internal_dscp", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17141,7 +17140,7 @@ cmd_data_check_cosmap(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("internal dp", "0");
+        cmd = get_sub_cmd("internal_dp", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17193,7 +17192,7 @@ cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("sp id", "0");
+        cmd = get_sub_cmd("sp_id", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17218,7 +17217,7 @@ cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("e pri", "0");
+        cmd = get_sub_cmd("e_pri", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17243,7 +17242,7 @@ cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("c pri", "0");
+        cmd = get_sub_cmd("c_pri", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17268,7 +17267,7 @@ cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("c drr id", "0");
+        cmd = get_sub_cmd("c_drr_id", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17293,7 +17292,7 @@ cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("e drr id", "0");
+        cmd = get_sub_cmd("e_drr_id", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17318,7 +17317,7 @@ cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("e drr wt", "0");
+        cmd = get_sub_cmd("e_drr_wt", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17343,7 +17342,7 @@ cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("c drr wt", "0");
+        cmd = get_sub_cmd("c_drr_wt", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17368,7 +17367,7 @@ cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("c drr ut", "0");
+        cmd = get_sub_cmd("c_drr_ut", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17393,7 +17392,7 @@ cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("e drr ut", "0");
+        cmd = get_sub_cmd("e_drr_ut", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17418,7 +17417,7 @@ cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("drr frame mode", "0");
+        cmd = get_sub_cmd("drr_frame_mode", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17470,7 +17469,7 @@ cmd_data_check_bm_static_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("max thresh", "0");
+        cmd = get_sub_cmd("max_thresh", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17495,7 +17494,7 @@ cmd_data_check_bm_static_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("resume offset", "0");
+        cmd = get_sub_cmd("resume_off", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17583,7 +17582,7 @@ cmd_data_check_bm_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("shared ceiling", "0");
+        cmd = get_sub_cmd("shared_ceiling", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17608,7 +17607,7 @@ cmd_data_check_bm_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("resume offset", "0");
+        cmd = get_sub_cmd("resume_off", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17633,7 +17632,7 @@ cmd_data_check_bm_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("resume min thresh", "0");
+        cmd = get_sub_cmd("resume_min_thresh", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17736,7 +17735,7 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("src if check", "forward");
+        cmd = get_sub_cmd("src_if_check_action", "forward");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17761,7 +17760,7 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("src if deacclr", "enable");
+        cmd = get_sub_cmd("src_if_deacclr_en", "no");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17770,15 +17769,15 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.src_if_check_deacclr_en),
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.src_if_check_deacclr_en),
                                        sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
 
     }
@@ -17786,7 +17785,7 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("loop en", "disable");
+        cmd = get_sub_cmd("service_loop_en", "no");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17795,15 +17794,15 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.service_loop_en),
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.service_loop_en),
                                        sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
 
     }
@@ -17811,7 +17810,7 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("loop action", "forward");
+        cmd = get_sub_cmd("servcie_loop_action", "forward");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17836,7 +17835,7 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("loop deacclr", "enable");
+        cmd = get_sub_cmd("service_loop_deacclr_en", "no");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17845,15 +17844,15 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.service_loop_deacclr_en),
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.service_loop_deacclr_en),
                                        sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
 
     }
@@ -17861,7 +17860,7 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("flow deacclr", "forward");
+        cmd = get_sub_cmd("flow_deacclr_action", "forward");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17886,7 +17885,7 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("sync mismatch action", "forward");
+        cmd = get_sub_cmd("sync_mismatch_action", "forward");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17911,7 +17910,7 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("sync mismatch deacclr", "enable");
+        cmd = get_sub_cmd("sync_mismatch_deacclr_en", "no");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17920,15 +17919,15 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.sync_mismatch_deacclr_en),
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.sync_mismatch_deacclr_en),
                                        sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
 
     }
@@ -17936,7 +17935,7 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("hash mode 0", "0");
+        cmd = get_sub_cmd("hash_mode)0", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17953,7 +17952,7 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
             rv = cmd_data_check_uint8(cmd, &(entry.hash_mode_0),
                                        sizeof (a_uint8_t));
             if (SW_OK != rv)
-                dprintf("usage: 0 for disable and 1 for enable\n");
+                dprintf("usage: hash mode\n");
         }
 
     }
@@ -17961,7 +17960,7 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("hash mode 1", "0");
+        cmd = get_sub_cmd("hash_mode_1", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -17978,7 +17977,7 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
             rv = cmd_data_check_uint8(cmd, &(entry.hash_mode_1),
                                        sizeof (a_uint8_t));
             if (SW_OK != rv)
-                dprintf("usage: 0 for disable and 1 for enable\n");
+                dprintf("usage: hash mode\n");
         }
 
     }
@@ -17996,9 +17995,9 @@ cmd_data_print_flow_global(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t 
 
     entry = (fal_flow_global_cfg_t *) buf;
 
-    dprintf("\n[src_if_check]:0x%x [src_if_check_de_acce]:0x%x [service_loop_en]:0x%x [service_loop]:0x%x [service_loop_de_acce]:0x%x ",
+    dprintf("\n[src_if_check_action]:0x%x [src_if_check_deacclr_en]:0x%x [service_loop_en]:0x%x [service_loop_action]:0x%x [service_loop_deacclr_en]:0x%x ",
 			entry->src_if_check_action, entry->src_if_check_deacclr_en, entry->service_loop_en, entry->service_loop_action, entry->service_loop_deacclr_en);
-    dprintf("\n[flow_de_acce]:0x%x [sync_mismatch]:0x%x [sync_mismatch_de_acce]:0x%x [hash_mode_0]:0x%x [hash_mode_1]:0x%x ",
+    dprintf("\n[flow_deacclr_action]:0x%x [sync_mismatch_action]:0x%x [sync_mismatch_deacclr_en]:0x%x [hash_mode_0]:0x%x [hash_mode_1]:0x%x ",
 			entry->flow_deacclr_action, entry->sync_mismatch_action, entry->sync_mismatch_deacclr_en, entry->hash_mode_0, entry->hash_mode_1);
 
 }
@@ -18408,7 +18407,7 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("deaclr", "enable");
+        cmd = get_sub_cmd("deaclr", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -18417,21 +18416,21 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.deacclr_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.deacclr_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("copy tocpu", "enable");
+        cmd = get_sub_cmd("copy tocpu", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -18440,14 +18439,14 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.copy_tocpu_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.copy_tocpu_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -18665,7 +18664,7 @@ cmd_data_print_ac_static_thresh(a_uint8_t * param_name, a_uint32_t * buf, a_uint
 
     entry = (fal_ac_static_threshold_t *) buf;
     
-    dprintf("\n[color_enable]:0x%x [wred_enable]:0x%x [green_max]:0x%x ",
+    dprintf("\n[color_en]:0x%x [wred_en]:0x%x [green_max]:0x%x ",
 			entry->color_enable, entry->wred_enable, entry->green_max);
     dprintf("\n[green_min_off]:0x%x [yel_max_off]:0x%x [yel_min_off]:0x%x [red_max_off]:0x%x [red_min_off]:0x%x ",
 			entry->green_min_off, entry->yel_max_off, entry->yel_min_off, entry->red_max_off, entry->red_min_off);
@@ -18680,7 +18679,7 @@ cmd_data_print_ac_dynamic_thresh(a_uint8_t * param_name, a_uint32_t * buf, a_uin
 
     entry = (fal_ac_dynamic_threshold_t *) buf;
     
-    dprintf("\n[color_enable]:0x%x [wred_enable]:0x%x [shared_weight]:0x%x ",
+    dprintf("\n[color_en]:0x%x [wred_en]:0x%x [shared_weight]:0x%x ",
 			entry->color_enable, entry->wred_enable, entry->shared_weight);
     dprintf("\n[green_min_off]:0x%x [yel_max_off]:0x%x [yel_min_off]:0x%x [red_max_off]:0x%x [red_min_off]:0x%x ",
 			entry->green_min_off, entry->yel_max_off, entry->yel_min_off, entry->red_max_off, entry->red_min_off);
@@ -18733,7 +18732,7 @@ cmd_data_check_flow_ctrl(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("miss action", "forward");
+        cmd = get_sub_cmd("miss_action", "forward");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -18758,7 +18757,7 @@ cmd_data_check_flow_ctrl(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("frag bypass", "enable");
+        cmd = get_sub_cmd("frag_bypass_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -18767,21 +18766,21 @@ cmd_data_check_flow_ctrl(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.frag_bypass_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.frag_bypass_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("tcpspec bypass", "enable");
+        cmd = get_sub_cmd("tcpspec_bypass_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -18790,21 +18789,21 @@ cmd_data_check_flow_ctrl(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.tcp_spec_bypass_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.tcp_spec_bypass_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("all bypass", "enable");
+        cmd = get_sub_cmd("all_bypass_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -18813,21 +18812,21 @@ cmd_data_check_flow_ctrl(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.all_bypass_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.all_bypass_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("key sel", "0");
+        cmd = get_sub_cmd("key_sel", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -18870,7 +18869,7 @@ cmd_data_print_flow_ctrl(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t si
 
     entry = (fal_flow_mgmt_t *) buf;
     
-    dprintf("\n[frag_bypass]:0x%x [tcp_spec_bypass]:0x%x [all_bypass]:0x%x [key_sel]:0x%x [miss_action]:0x%x ",
+    dprintf("\n[frag_bypass_en]:0x%x [tcp_spec_bypass_en]:0x%x [all_bypass_en]:0x%x [key_sel]:0x%x [miss_action]:0x%x ",
 			entry->frag_bypass_en, entry->tcp_spec_bypass_en,
 			entry->all_bypass_en, entry->key_sel, entry->miss_action);
 }
@@ -18887,7 +18886,7 @@ cmd_data_check_ip_mcmode(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("ipv4 mc en", "enable");
+        cmd = get_sub_cmd("ipv4_mc_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -18896,21 +18895,21 @@ cmd_data_check_ip_mcmode(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.l2_ipv4_mc_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.l2_ipv4_mc_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("ipv4 mc mode", "0");
+        cmd = get_sub_cmd("ipv4_igmpv3_mode", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -18933,7 +18932,7 @@ cmd_data_check_ip_mcmode(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("ipv6 mc en", "enable");
+        cmd = get_sub_cmd("ipv6_mc_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -18942,21 +18941,21 @@ cmd_data_check_ip_mcmode(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.l2_ipv6_mc_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.l2_ipv6_mc_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("ipv6 mc mode", "0");
+        cmd = get_sub_cmd("ipv6_mldv2_mode", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -18988,7 +18987,7 @@ cmd_data_print_ip_mcmode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t si
 
     entry = (fal_mc_mode_cfg_t *) buf;
     
-    dprintf("\n[ipv4_mc_en]:0x%x [ipv4_mc_mode]:0x%x [ipv6_mc_en]:0x%x [ipv6_mc_mode]:0x%x ",
+    dprintf("\n[ipv4_mc_en]:0x%x [ipv4_igmpv3_mode]:0x%x [ipv6_mc_en]:0x%x [ipv6_mldv2_mode]:0x%x ",
 			entry->l2_ipv4_mc_en, entry->l2_ipv4_mc_mode,
 			entry->l2_ipv6_mc_en, entry->l2_ipv6_mc_mode);
 }
@@ -19006,7 +19005,7 @@ cmd_data_check_ip_portmac(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("entry valid", "0");
+        cmd = get_sub_cmd("entry_valid", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19027,7 +19026,7 @@ cmd_data_check_ip_portmac(char *cmd_str, void * val, a_uint32_t size)
     }
     while (talk_mode && (SW_OK != rv));
 
-    cmd_data_check_element("mac addr", NULL,
+    cmd_data_check_element("mac_addr", NULL,
                            "usage: the format is xx-xx-xx-xx-xx-xx \n",
                            cmd_data_check_macaddr, (cmd, &(entry.mac_addr),
                                    sizeof (fal_mac_addr_t)));
@@ -19043,7 +19042,7 @@ cmd_data_print_ip_portmac(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t s
 
     entry = (fal_macaddr_entry_t *) buf;
     
-    dprintf("\n[valid]:0x%x", entry->valid);
+    dprintf("\n[entry_valid]:0x%x", entry->valid);
     cmd_data_print_macaddr("\n[mac_addr]:",
                            (a_uint32_t *) & (entry->mac_addr),
                            sizeof (fal_mac_addr_t));
@@ -19059,7 +19058,7 @@ cmd_data_check_ip_pub(char *cmd_str, void * val, a_uint32_t size)
 
     aos_mem_zero(&entry, sizeof (fal_ip_pub_addr_t));
 
-    cmd_data_check_element("ip4 addr", NULL,
+    cmd_data_check_element("pub_ip_addr", NULL,
                                "usage: the format is xx.xx.xx.xx \n",
                                cmd_data_check_ip4addr, (cmd, &(entry.pub_ip_addr), 4));
 
@@ -19074,7 +19073,7 @@ cmd_data_print_ip_pub(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 
     entry = (fal_ip_pub_addr_t *) buf;
     
-    cmd_data_print_ip4addr("\n[ip_addr]:",
+    cmd_data_print_ip4addr("\n[pub_ip_addr]:",
                                (a_uint32_t *) & (entry->pub_ip_addr),
                                sizeof (fal_ip4_addr_t));
 }
@@ -19091,7 +19090,7 @@ cmd_data_check_ip_sg(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("ipv4 sg en", "enable");
+        cmd = get_sub_cmd("ipv4_sg_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19100,21 +19099,21 @@ cmd_data_check_ip_sg(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ipv4_sg_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.ipv4_sg_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("ipv4 sg vio cmd", "forward");
+        cmd = get_sub_cmd("ipv4_sg_violation_action", "forward");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19139,7 +19138,7 @@ cmd_data_check_ip_sg(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("ipv4 sg port en", "enable");
+        cmd = get_sub_cmd("ipv4_sg_port_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19148,21 +19147,21 @@ cmd_data_check_ip_sg(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ipv4_sg_port_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.ipv4_sg_port_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("ipv4 sg svlan en", "enable");
+        cmd = get_sub_cmd("ipv4_sg_svlan_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19171,21 +19170,21 @@ cmd_data_check_ip_sg(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ipv4_sg_svlan_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.ipv4_sg_svlan_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("ipv4 sg cvlan en", "enable");
+        cmd = get_sub_cmd("ipv4_sg_cvlan_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19194,21 +19193,21 @@ cmd_data_check_ip_sg(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ipv4_sg_cvlan_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.ipv4_sg_cvlan_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("ipv4 src unk cmd", "forward");
+        cmd = get_sub_cmd("ipv4_src_unk_action", "forward");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19233,7 +19232,7 @@ cmd_data_check_ip_sg(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("ipv6 sg en", "enable");
+        cmd = get_sub_cmd("ipv6_sg_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19242,21 +19241,21 @@ cmd_data_check_ip_sg(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ipv6_sg_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.ipv6_sg_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("ipv6 sg vio cmd", "forward");
+        cmd = get_sub_cmd("ipv6_sg_violation_action", "forward");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19281,7 +19280,7 @@ cmd_data_check_ip_sg(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("ipv6 sg port en", "enable");
+        cmd = get_sub_cmd("ipv6_sg_port_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19290,21 +19289,21 @@ cmd_data_check_ip_sg(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ipv6_sg_port_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.ipv6_sg_port_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("ipv6 sg svlan en", "enable");
+        cmd = get_sub_cmd("ipv6_sg_svlan_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19313,21 +19312,21 @@ cmd_data_check_ip_sg(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ipv6_sg_svlan_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.ipv6_sg_svlan_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("ipv6 sg cvlan en", "enable");
+        cmd = get_sub_cmd("ipv6_sg_cvlan_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19336,21 +19335,21 @@ cmd_data_check_ip_sg(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ipv6_sg_cvlan_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.ipv6_sg_cvlan_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("ipv6 src unk cmd", "forward");
+        cmd = get_sub_cmd("ipv6_src_unk_action", "forward");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19384,13 +19383,13 @@ cmd_data_print_ip_sg(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 
     entry = (fal_sg_cfg_t *) buf;
     
-    dprintf("\n[ipv4 sg en]:0x%x  [ipv4 sg vio cmd]:0x%x [ipv4 sg port en]:0x%x ",
+    dprintf("\n[ipv4_sg_en]:0x%x  [ipv4_sg_violation_action]:0x%x [ipv4_sg_port_en]:0x%x ",
             entry->ipv4_sg_en, entry->ipv4_sg_vio_action, entry->ipv4_sg_port_en);
-    dprintf("\n[ipv4_sg_svlan_en]:0x%x  [ipv4_sg_cvlan_en]:0x%x [ipv4_src_unk_cmd]:0x%x ",
+    dprintf("\n[ipv4_sg_svlan_en]:0x%x  [ipv4_sg_cvlan_en]:0x%x [ipv4_src_unk_action]:0x%x ",
             entry->ipv4_sg_svlan_en, entry->ipv4_sg_cvlan_en, entry->ipv4_src_unk_action);
-    dprintf("\n[ipv6 sg en]:0x%x  [ipv6 sg vio cmd]:0x%x [ipv6 sg port en]:0x%x ",
+    dprintf("\n[ipv6_sg_en]:0x%x  [ipv6_sg_violation_action]:0x%x [ipv6_sg_port_en]:0x%x ",
             entry->ipv6_sg_en, entry->ipv6_sg_vio_action, entry->ipv6_sg_port_en);
-    dprintf("\n[ipv6_sg_svlan_en]:0x%x  [ipv6_sg_cvlan_en]:0x%x [ipv6_src_unk_cmd]:0x%x ",
+    dprintf("\n[ipv6_sg_svlan_en]:0x%x  [ipv6_sg_cvlan_en]:0x%x [ipv6_src_unk_action]:0x%x ",
             entry->ipv6_sg_svlan_en, entry->ipv6_sg_cvlan_en, entry->ipv6_src_unk_action);
 }
 
@@ -19406,7 +19405,7 @@ cmd_data_check_vsi_intf(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("l3 if valid", "0");
+        cmd = get_sub_cmd("l3_if_valid", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19429,7 +19428,7 @@ cmd_data_check_vsi_intf(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("l3 if index", "0");
+        cmd = get_sub_cmd("l3_if_index", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19537,7 +19536,7 @@ cmd_data_check_nexthop(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("post l3 if", "0");
+        cmd = get_sub_cmd("if_index", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19560,7 +19559,7 @@ cmd_data_check_nexthop(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("ip to me", "enable");
+        cmd = get_sub_cmd("ip_to_me_en", "no");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19569,21 +19568,21 @@ cmd_data_check_nexthop(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ip_to_me_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.ip_to_me_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("pubip index", "0");
+        cmd = get_sub_cmd("pub_ip_index", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19606,7 +19605,7 @@ cmd_data_check_nexthop(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("stag fmt", "0");
+        cmd = get_sub_cmd("stag_fmt", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19652,7 +19651,7 @@ cmd_data_check_nexthop(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("ctag fmt", "0");
+        cmd = get_sub_cmd("ctag_fmt", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19696,7 +19695,7 @@ cmd_data_check_nexthop(char *cmd_str, void * val, a_uint32_t size)
     }
     while (talk_mode && (SW_OK != rv));
 
-    cmd_data_check_element("mac addr", NULL,
+    cmd_data_check_element("mac_addr", NULL,
                            "usage: the format is xx-xx-xx-xx-xx-xx \n",
                            cmd_data_check_macaddr, (cmd, &(entry.mac_addr),
                                    sizeof (fal_mac_addr_t)));
@@ -19729,14 +19728,14 @@ cmd_data_print_nexthop(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size
     dprintf(" [if index]:0x%x",
             entry->if_index);
 
-    dprintf("\n[ip_to_me]:0x%x [pub_index]:0x%x [stag_fmt]:0x%x",
+    dprintf("\n[ip_to_me_en]:0x%x [pub_ip_index]:0x%x [stag_fmt]:0x%x",
             entry->ip_to_me_en, entry->pub_ip_index, entry->stag_fmt);
     dprintf("\n[svid]:0x%x [ctag_fmt]:0x%x [cvid]:0x%x",
             entry->svid, entry->ctag_fmt, entry->cvid);
     cmd_data_print_macaddr("\n[mac_addr]:",
                            (a_uint32_t *) & (entry->mac_addr),
                            sizeof (fal_mac_addr_t));
-    cmd_data_print_ip4addr("\n[ip_addr]:",
+    cmd_data_print_ip4addr("\n[dnat_ip]:",
                                (a_uint32_t *) & (entry->dnat_ip),
                                sizeof (fal_ip4_addr_t));
 }
@@ -19748,7 +19747,7 @@ cmd_data_print_vsi_intf(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t siz
 
     entry = (fal_intf_id_t *) buf;
     
-    dprintf("\n[l3 if valid]:0x%x  [l3 if index]:0x%x",
+    dprintf("\n[l3_if_valid]:0x%x  [l3_if_index]:0x%x",
             entry->l3_if_valid, entry->l3_if_index);
 }
 
@@ -19760,11 +19759,11 @@ cmd_data_print_intf(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 
     entry = (fal_intf_entry_t *) buf;
     
-    dprintf("\n[mru]:0x%x  [mtu]:0x%x  [ttl_dec_bypass]:0x%x",
+    dprintf("\n[mru]:0x%x  [mtu]:0x%x  [ttl_dec_bypass_en]:0x%x",
             entry->mru, entry->mtu, entry->ttl_dec_bypass_en);
     dprintf("\n[ipv4_route_en]:0x%x  [ipv6_route_en]:0x%x  [icmp_trigger_en]:0x%x",
             entry->ipv4_uc_route_en, entry->ipv6_uc_route_en, entry->icmp_trigger_en);
-    dprintf("\n[ttl_exceed_cmd]:0x%x  [ttl_exceed_de_acce]:0x%x  [mac_bitmap]:0x%x",
+    dprintf("\n[ttl_exceed_action]:0x%x  [ttl_exceed_de_acclr_en]:0x%x  [mac_addr_bitmap]:0x%x",
             entry->ttl_exceed_action, entry->ttl_exceed_deacclr_en, entry->mac_addr_bitmap);
     cmd_data_print_macaddr("\n[mac_addr]:",
                            (a_uint32_t *) & (entry->mac_addr),
@@ -19789,7 +19788,7 @@ cmd_data_check_arp_sg(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("arp sg en", "enable");
+        cmd = get_sub_cmd("arp_sg_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19798,21 +19797,21 @@ cmd_data_check_arp_sg(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ipv4_arp_sg_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.ipv4_arp_sg_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("arp sg vio cmd", "forward");
+        cmd = get_sub_cmd("arp_sg_violation_action", "forward");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19837,7 +19836,7 @@ cmd_data_check_arp_sg(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("arp sg port en", "enable");
+        cmd = get_sub_cmd("arp_sg_port_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19846,21 +19845,21 @@ cmd_data_check_arp_sg(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ipv4_arp_sg_port_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.ipv4_arp_sg_port_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("arp sg svlan en", "enable");
+        cmd = get_sub_cmd("arp_sg_svlan_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19869,21 +19868,21 @@ cmd_data_check_arp_sg(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ipv4_arp_sg_svlan_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.ipv4_arp_sg_svlan_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("arp sg cvlan en", "enable");
+        cmd = get_sub_cmd("arp_sg_cvlan_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19892,21 +19891,21 @@ cmd_data_check_arp_sg(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ipv4_arp_sg_cvlan_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.ipv4_arp_sg_cvlan_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("arp sg unk cmd", "forward");
+        cmd = get_sub_cmd("arp_sg_unk_action", "forward");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19931,7 +19930,7 @@ cmd_data_check_arp_sg(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("nd sg en", "enable");
+        cmd = get_sub_cmd("nd_sg_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19940,21 +19939,21 @@ cmd_data_check_arp_sg(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ip_nd_sg_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.ip_nd_sg_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("nd sg vio cmd", "forward");
+        cmd = get_sub_cmd("nd_sg_violation_action", "forward");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19979,7 +19978,7 @@ cmd_data_check_arp_sg(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("nd sg port en", "enable");
+        cmd = get_sub_cmd("nd_sg_port_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -19988,21 +19987,21 @@ cmd_data_check_arp_sg(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ip_nd_sg_port_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.ip_nd_sg_port_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("nd sg svlan en", "enable");
+        cmd = get_sub_cmd("nd_sg_svlan_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -20011,21 +20010,21 @@ cmd_data_check_arp_sg(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ip_nd_sg_svlan_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.ip_nd_sg_svlan_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("nd sg cvlan en", "enable");
+        cmd = get_sub_cmd("nd_sg_cvlan_en", "yes");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -20034,21 +20033,21 @@ cmd_data_check_arp_sg(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: <enable/disable>\n");
+            dprintf("usage: <yes/no/y/n>\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_enable(cmd, &(entry.ip_nd_sg_cvlan_en), sizeof (a_bool_t));
+            rv = cmd_data_check_confirm(cmd, A_TRUE, &(entry.ip_nd_sg_cvlan_en), sizeof (a_bool_t));
             if (SW_OK != rv)
-                dprintf("usage: <enable/disable>\n");
+                dprintf("usage: <yes/no/y/n>\n");
         }
     }
     while (talk_mode && (SW_OK != rv));
 
     do
     {
-        cmd = get_sub_cmd("nd sg unk cmd", "forward");
+        cmd = get_sub_cmd("nd_sg_unk_action", "forward");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -20081,14 +20080,14 @@ cmd_data_print_arp_sg(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
     fal_arp_sg_cfg_t *entry;
 
     entry = (fal_arp_sg_cfg_t *) buf;
-    dprintf("\n[arp sg en]:0x%x  [arp sg vio cmd]:0x%x  [arp sg port en]:0x%x",
+    dprintf("\n[arp_sg_en]:0x%x  [arp_sg_violation_action]:0x%x  [arp_sg_port_en]:0x%x",
             entry->ipv4_arp_sg_en, entry->ipv4_arp_sg_vio_action, entry->ipv4_arp_sg_port_en);
-    dprintf("\n[arp sg svlan en]:0x%x  [arp sg cvlan en]:0x%x  [arp src unk cmd]:0x%x",
+    dprintf("\n[arp_sg_svlan_en]:0x%x  [arp_sg_cvlan_en]:0x%x  [arp_src_unk_action]:0x%x",
             entry->ipv4_arp_sg_svlan_en, entry->ipv4_arp_sg_cvlan_en, entry->ipv4_arp_src_unk_action);
 
-    dprintf("\n[nd sg en]:0x%x  [nd sg vio cmd]:0x%x  [nd sg port en]:0x%x",
+    dprintf("\n[nd_sg_en]:0x%x  [nd_sg_violation_action]:0x%x  [nd_sg_port_en]:0x%x",
             entry->ip_nd_sg_en, entry->ip_nd_sg_vio_action, entry->ip_nd_sg_port_en);
-    dprintf("\n[nd sg svlan en]:0x%x  [nd sg cvlan en]:0x%x  [nd src unk cmd]:0x%x",
+    dprintf("\n[nd_sg_svlan_en]:0x%x  [nd_sg_cvlan_en]:0x%x  [nd_src_unk_action]:0x%x",
             entry->ip_nd_sg_svlan_en, entry->ip_nd_sg_cvlan_en, entry->ip_nd_src_unk_action);
 }
 
@@ -20127,13 +20126,13 @@ cmd_data_check_network_route(char *cmd_str, void * val, a_uint32_t size)
 
     if (entry.type == 0) /*IPv4*/
     {
-        cmd_data_check_element("ip4 addr", NULL,
+        cmd_data_check_element("ip4 _addr", NULL,
                                "usage: the format is xx.xx.xx.xx \n",
                                cmd_data_check_ip4addr, (cmd, &(entry.route_addr.ip4_addr), 4));
     }
     else if (entry.type == 1) /*IPv6*/
     {
-        cmd_data_check_element("ip6 addr", NULL,
+        cmd_data_check_element("ip6_addr", NULL,
                                "usage: the format is xxxx::xx.xx \n",
                                cmd_data_check_ip6addr, (cmd, &(entry.route_addr.ip6_addr), 16));
     }
@@ -20144,13 +20143,13 @@ cmd_data_check_network_route(char *cmd_str, void * val, a_uint32_t size)
 
     if (entry.type == 0) /*IPv4*/
     {
-        cmd_data_check_element("ip4 addr mask", NULL,
+        cmd_data_check_element("ip4_addr_mask", NULL,
                                "usage: the format is xx.xx.xx.xx \n",
                                cmd_data_check_ip4addr, (cmd, &(entry.route_addr_mask.ip4_addr_mask), 4));
     }
     else if (entry.type == 1) /*IPv6*/
     {
-        cmd_data_check_element("ip6 addr mask", NULL,
+        cmd_data_check_element("ip6_addr_mask", NULL,
                                "usage: the format is xxxx::xxxx \n",
                                cmd_data_check_ip6addr, (cmd, &(entry.route_addr_mask.ip6_addr_mask), 16));
     }
@@ -20161,7 +20160,7 @@ cmd_data_check_network_route(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("fwd cmd", "forward");
+        cmd = get_sub_cmd("action", "forward");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -20186,7 +20185,7 @@ cmd_data_check_network_route(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("dst info", "0");
+        cmd = get_sub_cmd("dst_info", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -20209,7 +20208,7 @@ cmd_data_check_network_route(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("lan wan", "0");
+        cmd = get_sub_cmd("lan_wan", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
@@ -20243,14 +20242,14 @@ cmd_data_print_network_route(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_
     dprintf("\n[type]:0x%x ",
             entry->type);
     
-    dprintf("\n[dst_info]:0x%x  [lan_wan]:0x%x [fwd_cmd]:0x%x",
+    dprintf("\n[dst_info]:0x%x  [lan_wan]:0x%x [action]:0x%x",
             entry->dst_info, entry->lan_wan, entry->action);
 
     if (entry->type == 0) {
-        cmd_data_print_ip4addr("\n[ip_addr]:",
+        cmd_data_print_ip4addr("\n[ip4_addr]:",
                                (a_uint32_t *) & (entry->route_addr.ip4_addr),
                                sizeof (fal_ip4_addr_t));
-        cmd_data_print_ip4addr("\n[ip_addr_mask]:",
+        cmd_data_print_ip4addr("\n[ip4_addr_mask]:",
                                (a_uint32_t *) & (entry->route_addr_mask.ip4_addr_mask),
                                sizeof (fal_ip4_addr_t));
     } else {
@@ -24573,8 +24572,8 @@ cmd_data_check_policer_cmd_config(char *cmd_str, void * val, a_uint32_t size)
 
     do
     {
-        cmd = get_sub_cmd("red_action", "0-1");
-		SW_RTN_ON_NULL_PARAM(cmd);
+        cmd = get_sub_cmd("red_action", "drop");
+        SW_RTN_ON_NULL_PARAM(cmd);
 
         if (!strncasecmp(cmd, "quit", 4))
         {
@@ -24582,17 +24581,16 @@ cmd_data_check_policer_cmd_config(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: integer\n");
+            dprintf("usage: forward/drop\n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_uint32(cmd, &(entry.red_action), sizeof (a_uint32_t));
+            rv = cmd_data_check_maccmd(cmd, &(entry.red_action), sizeof(a_uint32_t));
             if (SW_OK != rv)
-                dprintf("usage: integer\n");
+                dprintf("usage: forward/drop\n");
         }
-    }
-    while (talk_mode && (SW_OK != rv));
+    }while (talk_mode && (SW_OK != rv));
 
 
     do
@@ -24885,7 +24883,14 @@ cmd_data_print_policer_cmd_config(a_uint8_t * param_name, a_uint32_t * buf, a_ui
     dprintf("\n[yellow_pcp]:0x%x", entry->yellow_pcp);
     dprintf("\n[yellow_dei]:0x%x", entry->yellow_dei);
 
-    dprintf("\n[red_action]:0x%x", entry->red_action);
+    if (FAL_MAC_DROP == entry->red_action)
+    {
+        dprintf("\n[red_action]:drop");
+    }
+    else
+    {
+        dprintf("\n[red_action]:forward");
+    }
 
     if (A_TRUE == entry->red_priority_en)
     {

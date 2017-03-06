@@ -34,7 +34,7 @@ fal_mirr_analysis_port_get(a_uint32_t dev_id, fal_port_t * port_id)
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_MIRROR_ANALY_PT_GET, dev_id,
-                    (a_uint32_t) port_id);
+                    port_id);
     return rv;
 }
 
@@ -54,7 +54,7 @@ fal_mirr_port_in_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_MIRROR_IN_PT_GET, dev_id, port_id,
-                    (a_uint32_t) enable);
+                    enable);
     return rv;
 }
 
@@ -74,7 +74,7 @@ fal_mirr_port_eg_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_MIRROR_EG_PT_GET, dev_id, port_id,
-                    (a_uint32_t) enable);
+                    enable);
     return rv;
 }
 
@@ -83,7 +83,7 @@ fal_mirr_analysis_config_set(a_uint32_t dev_id, fal_mirr_direction_t direction, 
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_MIRROR_ANALYSIS_CONFIG_SET, dev_id, direction, (a_uint32_t)config);
+    rv = sw_uk_exec(SW_API_MIRROR_ANALYSIS_CONFIG_SET, dev_id, direction, config);
     return rv;
 }
 
@@ -92,7 +92,7 @@ fal_mirr_analysis_config_get(a_uint32_t dev_id, fal_mirr_direction_t direction, 
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_MIRROR_ANALYSIS_CONFIG_GET, dev_id, direction, (a_uint32_t)config);
+    rv = sw_uk_exec(SW_API_MIRROR_ANALYSIS_CONFIG_GET, dev_id, direction, config);
     return rv;
 }
 

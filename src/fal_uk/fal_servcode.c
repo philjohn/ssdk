@@ -25,7 +25,7 @@ sw_error_t fal_servcode_config_set(a_uint32_t dev_id, a_uint32_t servcode_index,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_SERVCODE_CONFIG_SET, dev_id, servcode_index,
-                    (a_uint32_t) entry);
+                    entry);
     return rv;
 }
 
@@ -35,7 +35,7 @@ sw_error_t fal_servcode_config_get(a_uint32_t dev_id, a_uint32_t servcode_index,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_SERVCODE_CONFIG_GET, dev_id, servcode_index,
-                    (a_uint32_t) entry);
+                    entry);
     return rv;
 }
 
@@ -51,7 +51,7 @@ sw_error_t fal_servcode_loopcheck_status_get(a_uint32_t dev_id, a_bool_t *enable
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_SERVCODE_LOOPCHECK_STATUS_GET, dev_id, (a_uint32_t) enable);
+    rv = sw_uk_exec(SW_API_SERVCODE_LOOPCHECK_STATUS_GET, dev_id, enable);
     return rv;
 }
 

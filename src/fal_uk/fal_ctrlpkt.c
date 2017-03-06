@@ -35,7 +35,7 @@ fal_mgmtctrl_ethtype_profile_get(a_uint32_t dev_id, a_uint32_t profile_id, a_uin
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_MGMTCTRL_ETHTYPE_PROFILE_GET, dev_id, profile_id,
-                    (a_uint32_t) ethtype);
+                    ethtype);
     return rv;
 }
 
@@ -45,7 +45,7 @@ fal_mgmtctrl_rfdb_profile_set(a_uint32_t dev_id, a_uint32_t profile_id, fal_mac_
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_MGMTCTRL_RFDB_PROFILE_SET, dev_id, profile_id,
-                    (a_uint32_t) addr);
+                    addr);
     return rv;
 }
 
@@ -55,7 +55,7 @@ fal_mgmtctrl_rfdb_profile_get(a_uint32_t dev_id, a_uint32_t profile_id, fal_mac_
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_MGMTCTRL_RFDB_PROFILE_GET, dev_id, profile_id,
-                    (a_uint32_t) addr);
+                    addr);
     return rv;
 }
 
@@ -64,7 +64,7 @@ fal_mgmtctrl_ctrlpkt_profile_add(a_uint32_t dev_id, fal_ctrlpkt_profile_t *ctrlp
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_MGMTCTRL_CTRLPKT_PROFILE_ADD, dev_id, (a_uint32_t) ctrlpkt);
+    rv = sw_uk_exec(SW_API_MGMTCTRL_CTRLPKT_PROFILE_ADD, dev_id, ctrlpkt);
     return rv;
 }
 
@@ -73,7 +73,7 @@ fal_mgmtctrl_ctrlpkt_profile_del(a_uint32_t dev_id, fal_ctrlpkt_profile_t *ctrlp
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_MGMTCTRL_CTRLPKT_PROFILE_DEL, dev_id, (a_uint32_t) ctrlpkt);
+    rv = sw_uk_exec(SW_API_MGMTCTRL_CTRLPKT_PROFILE_DEL, dev_id, ctrlpkt);
     return rv;
 }
 
@@ -82,7 +82,7 @@ fal_mgmtctrl_ctrlpkt_profile_getfirst(a_uint32_t dev_id, fal_ctrlpkt_profile_t *
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_MGMTCTRL_CTRLPKT_PROFILE_GETFIRST, dev_id, (a_uint32_t) ctrlpkt);
+    rv = sw_uk_exec(SW_API_MGMTCTRL_CTRLPKT_PROFILE_GETFIRST, dev_id, ctrlpkt);
     return rv;
 }
 
@@ -91,6 +91,6 @@ fal_mgmtctrl_ctrlpkt_profile_getnext(a_uint32_t dev_id, fal_ctrlpkt_profile_t *c
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_MGMTCTRL_CTRLPKT_PROFILE_GETNEXT, dev_id, (a_uint32_t) ctrlpkt);
+    rv = sw_uk_exec(SW_API_MGMTCTRL_CTRLPKT_PROFILE_GETNEXT, dev_id, ctrlpkt);
     return rv;
 }

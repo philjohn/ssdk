@@ -38,7 +38,7 @@ fal_trunk_group_get(a_uint32_t dev_id, a_uint32_t trunk_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_TRUNK_GROUP_GET, dev_id, trunk_id, enable,
-                    (a_uint32_t) member);
+                    member);
     return rv;
 }
 

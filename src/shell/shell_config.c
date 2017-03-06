@@ -1011,7 +1011,7 @@ struct cmd_des_t gcmd_des[] =
 	{"ctrl", "get", "get flowctrl mode", "<port_id>", SW_API_BM_CTRL_GET, NULL},
 	{"portgroupmap", "set", "set port group mapping", "<port_id> <group_id>", SW_API_BM_PORTGROUP_MAP_SET, NULL},
 	{"portgroupmap", "get", "get port group mapping", "<port_id>", SW_API_BM_PORTGROUP_MAP_GET, NULL},
-	{"groupbuff", "set", "set group buffer", "<group_id> <buf_num>", SW_API_BM_GROUP_BUFFER_SET, NULL},
+	{"groupbuff", "set", "set group buffer", "<group_id> <buff_num>", SW_API_BM_GROUP_BUFFER_SET, NULL},
 	{"groupbuff", "get", "get group buffer", "<group_id>", SW_API_BM_GROUP_BUFFER_GET, NULL},
 	{"portrsvbuff", "set", "set port reserved buffer", "<port_id> <prealloc_num> <react_num>", SW_API_BM_PORT_RSVBUFFER_SET, NULL},
 	{"portrsvbuff", "get", "get port reserved buffer", "<port_id>", SW_API_BM_PORT_RSVBUFFER_GET, NULL},

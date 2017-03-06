@@ -37,6 +37,6 @@ fal_stp_port_state_get(a_uint32_t dev_id, a_uint32_t st_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_STP_PT_STATE_GET, dev_id, st_id, port_id,
-                    (a_uint32_t) state);
+                    state);
     return rv;
 }
