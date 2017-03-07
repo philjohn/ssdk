@@ -69,6 +69,10 @@ ifeq ($(CONFIG_TARGET_ar71xx),)
 endif
 endif
 
+ifeq ($(CONFIG_TARGET_ipq806x_QSDK_Standard),)
+    QCASSDK_CONFIG_OPTS+= HK_CHIP=enable
+endif
+
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include/qca-ssdk
 	$(INSTALL_DIR) $(1)/usr/include/qca-ssdk/api
