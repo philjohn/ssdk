@@ -23,13 +23,15 @@
 static char **full_cmdstrp;
 static int talk_mode = 1;
 
-char g_aclcmd[2000] = "\0";
+char g_aclcmd[500] = "\0";
 a_uint32_t g_aclcmd_len = 0;;
 
 void append_acl_cmd(char * cmd)
 {
-        g_aclcmd_len += sprintf(g_aclcmd+g_aclcmd_len, cmd);
-        g_aclcmd_len += sprintf(g_aclcmd+g_aclcmd_len, " ");
+	if(500 > (g_aclcmd_len+1)) {
+		g_aclcmd_len += snprintf(g_aclcmd+g_aclcmd_len, 500-g_aclcmd_len, cmd);
+		g_aclcmd_len += snprintf(g_aclcmd+g_aclcmd_len, 500-g_aclcmd_len, " ");
+	}
 }
 
 int
@@ -5868,7 +5870,7 @@ cmd_data_check_aclrule(char *info, void *val, a_uint32_t size)
     memset(&entry, 0, sizeof (fal_acl_rule_t));
 
     dprintf("\n");
-    g_aclcmd_len = sprintf(g_aclcmd, "ssdk_sh acl rule add xx xx 1 ");
+    g_aclcmd_len = snprintf(g_aclcmd, 500-g_aclcmd_len, "ssdk_sh acl rule add [listid] [ruleid] 1 ");
 
     cmd_data_check_element("post routing enable", "no",
                            "usage: <yes/no/y/n>\n", cmd_data_check_confirm,
