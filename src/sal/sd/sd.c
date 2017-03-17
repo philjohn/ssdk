@@ -48,10 +48,6 @@ sd_reg_mdio_set(a_uint32_t dev_id, a_uint32_t phy, a_uint32_t reg,
             args[3] = phy;
             args[4] = reg;
             args[5] = data;
-            if (SW_OK != sw_uk_if(args))
-            {
-                return SW_FAIL;
-            }
         }
 #else
         return SW_NOT_SUPPORTED;
@@ -83,10 +79,6 @@ sd_reg_mdio_get(a_uint32_t dev_id, a_uint32_t phy, a_uint32_t reg, a_uint16_t * 
             args[3] = phy;
             args[4] = reg;
             args[5] = (a_uint32_t) & tmp;
-            if (SW_OK != sw_uk_if(args))
-            {
-                return SW_FAIL;
-            }
             *data = *((a_uint16_t *)&tmp);
         }
 #else

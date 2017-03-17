@@ -644,7 +644,7 @@ handle_tab(void)
         }
 
     }
-    else if (cmd_nr > 1)
+    else
     {
         if (FULL_MATCHED(pmatch_nr, pmatch_id))
         {
@@ -663,7 +663,7 @@ handle_tab(void)
                 }
 
             }
-            else if (cmd_nr == 3)
+            else
             {
                 int pmatch_act_nr = 0, pmatch_act_id = GCMD_DESC_NO_MATCH;
                 pmatch_act_nr = search_cmd_action(pmatch_id, &pmatch_act_id, tmp_str[1], tmp_str[2], is_print);

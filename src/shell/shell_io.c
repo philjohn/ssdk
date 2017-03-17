@@ -2216,13 +2216,9 @@ cmd_data_print_confirm(char * param_name, a_bool_t val, a_uint32_t size)
     {
         dprintf("YES");
     }
-    else if (A_FALSE == val)
-    {
-        dprintf("NO");
-    }
     else
     {
-        dprintf("UNKNOW");
+        dprintf("NO");
     }
 
     return;
@@ -2251,7 +2247,6 @@ sw_error_t
 cmd_data_check_portmap(char *cmdstr, fal_pbmp_t * val, a_uint32_t size)
 {
     char *tmp = NULL, *str_save;
-    a_uint32_t i = 0;
     a_uint32_t port;
 
     *val = 0;
@@ -2264,11 +2259,6 @@ cmd_data_check_portmap(char *cmdstr, fal_pbmp_t * val, a_uint32_t size)
     tmp = (void *) strtok_r(cmdstr, ",", &str_save);
     while (tmp)
     {
-        if (SW_MAX_NR_PORT <= i)
-        {
-            return SW_BAD_VALUE;
-        }
-
         sscanf(tmp, "%d", &port);
         if (SW_MAX_NR_PORT <= port)
         {
