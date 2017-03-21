@@ -43,12 +43,8 @@ sw_uk_exec(a_uint32_t api_id, ...)
         value[i + 2] = va_arg(arg_ptr, unsigned long);
     }
     va_end(arg_ptr);
+    sw_uk_if(value);
 
-    rv = sw_uk_if(value);
-    if (SW_OK != rv)
-    {
-        return rv;
-    }
     return rtn;
 }
 
