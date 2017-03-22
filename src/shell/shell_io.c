@@ -5871,11 +5871,11 @@ cmd_data_check_aclrule(char *info, void *val, a_uint32_t size)
                        cmd_data_check_integer, (cmd, &tmpdata, 0x7,
                                0x0));
     entry.pri = tmpdata;
-    cmd_data_check_element("resouce chain", "0x0",
+    cmd_data_check_element("acl pool", "0x0",
                        "usage: the format is 0x0-0x1 or 0-1 \n",
                        cmd_data_check_integer, (cmd, &tmpdata, 0x1,
                                0x0));
-    entry.res_chain = tmpdata;
+    entry.acl_pool = tmpdata;
     /* get rule type configuration */
     cmd_data_check_element("rule type", NULL, "usage: <mac/ip4/ip6/udf> \n",
                            cmd_data_check_ruletype, (cmd, &entry.rule_type,
@@ -5996,7 +5996,7 @@ cmd_data_print_aclrule(char * param_name, a_uint32_t * buf,
 
     dprintf("\n[priority]:0x%x", rule->pri);
     cmd_data_print_confirm("\n[post_routing_en]:", rule->post_routing, sizeof(a_uint32_t));
-    dprintf("\n[res_chain]:0x%x", rule->res_chain);
+    dprintf("\n[acl_pool]:0x%x", rule->acl_pool);
 
     if (FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_FAKE_MAC_HEADER))
     {
