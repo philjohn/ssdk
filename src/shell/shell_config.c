@@ -1051,6 +1051,8 @@ struct cmd_des_t gcmd_des[] =
             {"phycounter",  "set", "set counter status of a port",   "<port_id> <enable|disable>", SW_API_DEBUG_PHYCOUNTER_SET, NULL},
             {"phycounter",  "get", "get counter status of a port",   "<port_id>", SW_API_DEBUG_PHYCOUNTER_GET, NULL},
             {"phycounter",  "show", "show counter of a port",   "<port_id>", SW_API_DEBUG_PHYCOUNTER_SHOW, NULL},
+            {"uniphy", "get", "read uniphy register", "<reg_addr> <uniphy_index> <4>", SW_API_UNIPHY_REG_GET, NULL},
+            {"uniphy", "set", "write uniphy register", "<reg_addr> <uniphy_index> <value> <4>", SW_API_UNIPHY_REG_SET, NULL},
             {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
         },
     },

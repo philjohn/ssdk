@@ -1638,7 +1638,9 @@ extern "C" {
     SW_API_DEF(SW_API_REG_DUMP, fal_reg_dump), \
     SW_API_DEF(SW_API_DBG_REG_DUMP, fal_dbg_reg_dump),\
     SW_API_DEF(SW_API_DBG_PSGMII_SELF_TEST, fal_debug_psgmii_self_test), \
-    SW_API_DEF(SW_API_PHY_DUMP, fal_phy_dump),
+    SW_API_DEF(SW_API_PHY_DUMP, fal_phy_dump), \
+	SW_API_DEF(SW_API_UNIPHY_REG_GET, fal_uniphy_reg_get), \
+    SW_API_DEF(SW_API_UNIPHY_REG_SET, fal_uniphy_reg_set),
 
 
 #define REG_API_PARAM \
@@ -1653,7 +1655,10 @@ extern "C" {
     SW_API_DESC(SW_API_REG_DUMP) \
     SW_API_DESC(SW_API_DBG_REG_DUMP) \
     SW_API_DESC(SW_API_DBG_PSGMII_SELF_TEST) \
-    SW_API_DESC(SW_API_PHY_DUMP)
+    SW_API_DESC(SW_API_PHY_DUMP) \
+	SW_API_DESC(SW_API_UNIPHY_REG_GET) \
+    SW_API_DESC(SW_API_UNIPHY_REG_SET)
+
 
 #ifdef IN_CTRLPKT
 #define CTRLPKT_API \

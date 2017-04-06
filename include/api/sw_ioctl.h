@@ -811,7 +811,8 @@ extern "C" {
 #define SW_API_DBG_REG_DUMP          		(11  + SW_API_DEBUG_OFFSET)
 #define SW_API_DBG_PSGMII_SELF_TEST          		(12  + SW_API_DEBUG_OFFSET)
 #define SW_API_PHY_DUMP             (13  + SW_API_DEBUG_OFFSET)
-
+#define SW_API_UNIPHY_REG_GET             (20  + SW_API_DEBUG_OFFSET)
+#define SW_API_UNIPHY_REG_SET             (21  + SW_API_DEBUG_OFFSET)
     /* Ctrlpkt Control */
 #define SW_API_CTRLPKT_OFFSET        2500
 #define SW_API_MGMTCTRL_ETHTYPE_PROFILE_SET (0  + SW_API_CTRLPKT_OFFSET)
