@@ -289,6 +289,8 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_EGRESS_MODE, cmd_data_check_egress_mode, cmd_data_print_egress_mode),
     SW_TYPE_DEF(SW_CTRLPKT_PROFILE, cmd_data_check_ctrlpkt_profile, cmd_data_print_ctrlpkt_profile),
     SW_TYPE_DEF(SW_SERVCODE_CONFIG, cmd_data_check_servcode_config, cmd_data_print_servcode_config),
+    SW_TYPE_DEF(SW_RSS_HASH_MODE, cmd_data_check_rss_hash_mode, NULL),
+    SW_TYPE_DEF(SW_RSS_HASH_CONFIG, cmd_data_check_rss_hash_config, cmd_data_print_rss_hash_config),
     SW_TYPE_DEF(SW_L3_PARSER, cmd_data_check_l3_parser, cmd_data_print_l3_parser),
     SW_TYPE_DEF(SW_L4_PARSER, cmd_data_check_l4_parser, cmd_data_print_l4_parser),
     SW_TYPE_DEF(SW_EXP_CTRL, cmd_data_check_exp_ctrl, cmd_data_print_exp_ctrl),
@@ -23201,6 +23203,301 @@ cmd_data_print_servcode_config(a_uint8_t * param_name, a_uint32_t * buf, a_uint3
 				entry->field_update_bitmap, entry->next_service_code);
 	dprintf("hardwareservices:%d  offsetselection:%d\n",
 				entry->hw_services, entry->offset_sel);
+}
+
+sw_error_t
+cmd_data_check_rss_hash_mode(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
+{
+    if (cmd_str == NULL)
+        return SW_BAD_PARAM;
+
+    if (!strcasecmp(cmd_str, "ipv4v6"))
+    {
+        *arg_val = FAL_RSS_HASH_IPV4V6;
+    }
+    else if (!strcasecmp(cmd_str, "ipv4"))
+    {
+        *arg_val = FAL_RSS_HASH_IPV4ONLY;
+    }
+    else if (!strcasecmp(cmd_str, "ipv6"))
+    {
+        *arg_val = FAL_RSS_HASH_IPV6ONLY;
+    }
+    else
+    {
+        //dprintf("input error \n");
+        return SW_BAD_VALUE;
+    }
+
+    return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_rss_hash_config(char *info, fal_rss_hash_config_t *val, a_uint32_t size)
+{
+	char *cmd = NULL;
+	sw_error_t rv;
+	fal_rss_hash_config_t entry;
+
+	memset(&entry, 0, sizeof (fal_rss_hash_config_t));
+
+	do
+	{
+		cmd = get_sub_cmd("hash_mask", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("hash_mask: 0 - 0x1fffff\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &entry.hash_mask, sizeof (a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("hash_mask: 0 - 0x1fffff\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	do
+	{
+		cmd = get_sub_cmd("hash_fragment_mode", "no");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: <yes/no/y/n>\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_confirm(cmd, A_FALSE, &entry.hash_fragment_mode,
+					sizeof (a_bool_t));
+			if (SW_OK != rv)
+				dprintf("usage: <yes/no/y/n>\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	do
+	{
+		cmd = get_sub_cmd("hash_seed", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("hash_mask: 0 - 0xffffffff\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &entry.hash_seed, sizeof (a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("hash_mask: 0 - ffffffff\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	do
+	{
+		cmd = get_sub_cmd("hash_sip_mix", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("hash_mask: 0 - 0xfffff\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &entry.hash_sip_mix, sizeof (a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("hash_mask: 0 - 0xfffff\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	do
+	{
+		cmd = get_sub_cmd("hash_dip_mix", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("hash_mask: 0 - 0xfffff\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &entry.hash_dip_mix, sizeof (a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("hash_mask: 0 - 0xfffff\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	do
+	{
+		cmd = get_sub_cmd("hash_protocol_mix", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("hash_mask: 0 - 0x1f\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &entry.hash_protocol_mix, sizeof (a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("hash_mask: 0 - 0x1f\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	do
+	{
+		cmd = get_sub_cmd("hash_sport_mix", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("hash_mask: 0 - 0x1f\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &entry.hash_sport_mix, sizeof (a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("hash_mask: 0 - 0x1f\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	do
+	{
+		cmd = get_sub_cmd("hash_dport_mix", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("hash_mask: 0 - 0x1f\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &entry.hash_dport_mix, sizeof (a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("hash_mask: 0 - 0x1f\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	do
+	{
+		cmd = get_sub_cmd("hash_fin_inner", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("hash_mask: 0 - 0x1ffffff\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &entry.hash_fin_inner, sizeof (a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("hash_mask: 0 - 0x1ffffff\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	do
+	{
+		cmd = get_sub_cmd("hash_fin_outer", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("hash_mask: 0 - 0x1ffffff\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &entry.hash_fin_outer, sizeof (a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("hash_mask: 0 - 0x1ffffff\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	*val = entry;
+	return SW_OK;
+}
+
+void
+cmd_data_print_rss_hash_config(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+{
+	fal_rss_hash_config_t *entry;
+
+	entry = (fal_rss_hash_config_t *) buf;
+
+	dprintf("\nhash_mask:0x%x  hash_fragment_mode:%s\n",
+				entry->hash_mask,
+				entry->hash_fragment_mode? "ENABLE" : "DISABLE");
+	dprintf("hash_seed:0x%x  hash_sip_mix:0x%x\n",
+				entry->hash_seed,
+				entry->hash_sip_mix);
+	dprintf("hash_dip_mix:0x%x  hash_protocol_mix:0x%x\n",
+				entry->hash_dip_mix,
+				entry->hash_protocol_mix);
+	dprintf("hash_sport_mix:0x%x  hash_dport_mix:0x%x\n",
+				entry->hash_sport_mix,
+				entry->hash_dport_mix);
+	dprintf("hash_fin_inner:0x%x  hash_fin_outer:0x%x\n",
+				entry->hash_fin_inner,
+				entry->hash_fin_outer);
 }
 
 sw_error_t

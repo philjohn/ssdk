@@ -81,6 +81,8 @@ cmd_data_check_module(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
         *arg_val = FAL_MODULE_BM;
     } else if (!strcasecmp(cmd_str, "servcode")) {
         *arg_val = FAL_MODULE_SERVCODE;
+    } else if (!strcasecmp(cmd_str, "rsshash")) {
+        *arg_val = FAL_MODULE_RSS_HASH;
     } else if (!strcasecmp(cmd_str, "pppoe")) {
         *arg_val = FAL_MODULE_PPPOE;
     } else if (!strcasecmp(cmd_str, "portctrl")) {
@@ -135,6 +137,8 @@ cmd_data_print_module(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
         dprintf("bm");
     } else if (*(a_uint32_t *) buf == FAL_MODULE_SERVCODE) {
         dprintf("servcode");
+    } else if (*(a_uint32_t *) buf == FAL_MODULE_RSS_HASH) {
+        dprintf("rsshash");
     } else if (*(a_uint32_t *) buf == FAL_MODULE_PPPOE) {
         dprintf("pppoe");
     } else if (*(a_uint32_t *) buf == FAL_MODULE_PORTCTRL) {
@@ -487,6 +491,28 @@ static void cmd_data_print_servcode_func_ctrl(fal_func_ctrl_t *p)
 	};
 
 	for(func = FUNC_SERVCODE_CONFIG_SET; func <= FUNC_SERVCODE_LOOPCHECK_STATUS_GET; func++)
+	{
+		if(p->bitmap[0] & (1<<func))
+		{
+			dprintf("%d  %s  registered\n", func, func_name[func]);
+		}
+		else
+		{
+			dprintf("%d  %s  unregistered\n", func, func_name[func]);
+		}
+	}
+	return;
+}
+
+static void cmd_data_print_rss_hash_func_ctrl(fal_func_ctrl_t *p)
+{
+	a_uint32_t func = 0;
+	char *func_name[FUNC_RSS_HASH_CONFIG_GET+1] ={
+		"FUNC_RSS_HASH_CONFIG_SET",
+		"FUNC_RSS_HASH_CONFIG_GET",
+	};
+
+	for(func = FUNC_RSS_HASH_CONFIG_SET; func <= FUNC_RSS_HASH_CONFIG_GET; func++)
 	{
 		if(p->bitmap[0] & (1<<func))
 		{
@@ -968,6 +994,8 @@ void cmd_data_print_module_func_ctrl(a_uint32_t module, fal_func_ctrl_t *p)
 		cmd_data_print_bm_func_ctrl(p);
 	} else if (module == FAL_MODULE_SERVCODE) {
 		cmd_data_print_servcode_func_ctrl(p);
+	} else if (module == FAL_MODULE_RSS_HASH) {
+		cmd_data_print_rss_hash_func_ctrl(p);
 	} else if (module == FAL_MODULE_PPPOE) {
 		cmd_data_print_pppoe_func_ctrl(p);
 	} else if (module == FAL_MODULE_PORTCTRL) {
