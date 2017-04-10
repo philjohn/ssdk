@@ -45,7 +45,7 @@ fal_port_policer_counter_get(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_POLICER_PORT_COUNTER_GET, dev_id, port_id,
-		(a_uint32_t) counter);
+		counter);
     return rv;
 }
 
@@ -56,7 +56,7 @@ fal_acl_policer_counter_get(a_uint32_t dev_id, a_uint32_t index,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_POLICER_ACL_COUNTER_GET, dev_id, index,
-		(a_uint32_t) counter);
+		counter);
     return rv;
 }
 
@@ -77,7 +77,7 @@ fal_port_policer_compensation_byte_get(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_POLICER_COMPENSATION_GET, dev_id, port_id,
-		(a_uint32_t) length);
+		 length);
     return rv;
 }
 
@@ -88,7 +88,7 @@ fal_port_policer_entry_set(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_POLICER_PORT_ENTRY_SET, dev_id, port_id,
-		(a_uint32_t) policer, (a_uint32_t) action);
+		policer, action);
     return rv;
 }
 
@@ -99,7 +99,7 @@ fal_port_policer_entry_get(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_POLICER_PORT_ENTRY_GET, dev_id, port_id,
-		(a_uint32_t) policer, (a_uint32_t) action);
+		policer, action);
     return rv;
 }
 
@@ -110,7 +110,7 @@ fal_acl_policer_entry_set(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_POLICER_ACL_ENTRY_SET, dev_id, port_id,
-		(a_uint32_t) policer, (a_uint32_t) action);
+		policer, action);
     return rv;
 }
 
@@ -121,7 +121,7 @@ fal_acl_policer_entry_get(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_POLICER_ACL_ENTRY_GET, dev_id, port_id,
-		(a_uint32_t) policer, (a_uint32_t) action);
+		policer, action);
     return rv;
 }
 
@@ -131,7 +131,7 @@ fal_policer_global_counter_get(a_uint32_t dev_id,fal_policer_global_counter_t *c
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_POLICER_GLOBAL_COUNTER_GET, dev_id,
-		(a_uint32_t) counter);
+		counter);
     return rv;
 }
 

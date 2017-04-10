@@ -81,7 +81,7 @@ fal_port_shaper_token_number_set(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_PORT_SHAPER_TOKEN_NUMBER_SET, dev_id, port_id,
-		(a_uint32_t) token_number);
+		token_number);
     return rv;
 }
 
@@ -92,7 +92,7 @@ fal_port_shaper_token_number_get(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_PORT_SHAPER_TOKEN_NUMBER_GET, dev_id, port_id,
-		(a_uint32_t) token_number);
+		token_number);
     return rv;
 }
 
@@ -103,7 +103,7 @@ fal_flow_shaper_token_number_set(a_uint32_t dev_id, a_uint32_t flow_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_FLOW_SHAPER_TOKEN_NUMBER_SET, dev_id, flow_id,
-		(a_uint32_t) token_number);
+		token_number);
     return rv;
 }
 
@@ -114,7 +114,7 @@ fal_flow_shaper_token_number_get(a_uint32_t dev_id, a_uint32_t flow_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_FLOW_SHAPER_TOKEN_NUMBER_GET, dev_id, flow_id,
-		(a_uint32_t) token_number);
+		token_number);
     return rv;
 }
 
@@ -125,7 +125,7 @@ fal_queue_shaper_token_number_set(a_uint32_t dev_id, a_uint32_t queue_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_QUEUE_SHAPER_TOKEN_NUMBER_SET, dev_id, queue_id,
-		(a_uint32_t) token_number);
+		token_number);
     return rv;
 }
 
@@ -136,7 +136,7 @@ fal_queue_shaper_token_number_get(a_uint32_t dev_id, a_uint32_t queue_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_QUEUE_SHAPER_TOKEN_NUMBER_GET, dev_id, queue_id,
-		(a_uint32_t) token_number);
+		token_number);
     return rv;
 }
 
@@ -146,7 +146,7 @@ fal_port_shaper_set(a_uint32_t dev_id, fal_port_t port_id, fal_shaper_config_t *
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_PORT_SHAPER_SET, dev_id, port_id,
-		(a_uint32_t) shaper);
+		shaper);
     return rv;
 }
 
@@ -156,7 +156,7 @@ fal_port_shaper_get(a_uint32_t dev_id, fal_port_t port_id, fal_shaper_config_t *
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_PORT_SHAPER_GET, dev_id, port_id,
-		(a_uint32_t) shaper);
+		shaper);
     return rv;
 }
 
@@ -166,7 +166,7 @@ fal_flow_shaper_set(a_uint32_t dev_id, a_uint32_t flow_id, fal_shaper_config_t *
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_FLOW_SHAPER_SET, dev_id, flow_id,
-		(a_uint32_t) shaper);
+		shaper);
     return rv;
 }
 
@@ -176,7 +176,7 @@ fal_flow_shaper_get(a_uint32_t dev_id, a_uint32_t flow_id, fal_shaper_config_t *
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_FLOW_SHAPER_GET, dev_id, flow_id,
-		(a_uint32_t) shaper);
+		shaper);
     return rv;
 }
 
@@ -186,7 +186,7 @@ fal_queue_shaper_set(a_uint32_t dev_id, a_uint32_t queue_id, fal_shaper_config_t
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_QUEUE_SHAPER_SET, dev_id, queue_id,
-		(a_uint32_t) shaper);
+		shaper);
     return rv;
 }
 
@@ -196,7 +196,7 @@ fal_queue_shaper_get(a_uint32_t dev_id, a_uint32_t queue_id, fal_shaper_config_t
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_QUEUE_SHAPER_GET, dev_id, queue_id,
-		(a_uint32_t) shaper);
+		shaper);
     return rv;
 }
 
