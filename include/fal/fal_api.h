@@ -1702,6 +1702,19 @@ extern "C" {
 #define SERVCODE_API_PARAM
 #endif
 
+#ifdef IN_RSS_HASH
+#define RSS_HASH_API \
+    SW_API_DEF(SW_API_RSS_HASH_CONFIG_SET, fal_rss_hash_config_set), \
+    SW_API_DEF(SW_API_RSS_HASH_CONFIG_GET, fal_rss_hash_config_get),
+
+#define RSS_HASH_API_PARAM \
+    SW_API_DESC(SW_API_RSS_HASH_CONFIG_SET) \
+    SW_API_DESC(SW_API_RSS_HASH_CONFIG_GET)
+#else
+#define RSS_HASH_API
+#define RSS_HASH_API_PARAM
+#endif
+
 #ifdef IN_SHAPER
 #define SHAPER_API \
     SW_API_DEF(SW_API_PORT_SHAPER_TIMESLOT_SET, fal_port_shaper_timeslot_set), \
@@ -1820,6 +1833,7 @@ extern "C" {
     REG_API \
     CTRLPKT_API \
     SERVCODE_API \
+	RSS_HASH_API \
 	POLICER_API \
 	SHAPER_API \
     SW_API_DEF(SW_API_MAX, NULL),
@@ -1863,6 +1877,7 @@ extern "C" {
     REG_API_PARAM \
     CTRLPKT_API_PARAM \
     SERVCODE_API_PARAM \
+	RSS_HASH_API_PARAM \
 	POLICER_API_PARAM \
 	SHAPER_API_PARAM \
     SW_PARAM_DEF(SW_API_MAX, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),

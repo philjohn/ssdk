@@ -953,6 +953,18 @@ struct cmd_des_t gcmd_des[] =
     },
 #endif
 
+	/*RSS HASH*/
+#ifdef IN_RSS_HASH
+	{
+		"rsshash", "config rss hash code",
+		{
+			{"Config", "set", "set ipv4/ipv6 rss hash code", "<ipv4v6|ipv4|ipv6>", SW_API_RSS_HASH_CONFIG_SET, NULL},
+			{"Config", "get", "get ipv4/ipv6 rss hash code", "<ipv4v6|ipv4|ipv6>", SW_API_RSS_HASH_CONFIG_GET, NULL},
+			{NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+		},
+	},
+#endif
+
 #ifdef IN_POLICER
 	{
 		"policer", "config policer",
