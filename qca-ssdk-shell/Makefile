@@ -28,8 +28,11 @@ define Package/qca-ssdk-shell/Description
   This package contains a qca-ssdk shell application for QCA chipset
 endef
 
+ifndef CONFIG_TOOLCHAIN_BIN_PATH
+CONFIG_TOOLCHAIN_BIN_PATH=$(TOOLCHAIN_DIR)/bin
+endif
 
-QCASSDK_CONFIG_OPTS+= TOOL_PATH=$(TOOLCHAIN_DIR)/bin/ \
+QCASSDK_CONFIG_OPTS+= TOOL_PATH=$(CONFIG_TOOLCHAIN_BIN_PATH) \
                 SYS_PATH=$(LINUX_DIR) \
                 TOOLPREFIX=$(TARGET_CROSS) \
                 KVER=$(LINUX_VERSION) \

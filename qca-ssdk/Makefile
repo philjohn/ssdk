@@ -30,6 +30,7 @@ endef
 
 define KernelPackage/qca-ssdk-nohnat
 $(call KernelPackage/qca-ssdk/default-nohnat)
+  DEPENDS:=@!TARGET_ipq_ipq40xx||TARGET_ar71xx
   VARIANT:=nohnat
 endef
 
@@ -39,7 +40,7 @@ endef
 
 define KernelPackage/qca-ssdk-hnat
 $(call KernelPackage/qca-ssdk/default-nohnat)
-  DEPENDS:=+kmod-ipt-extra +kmod-ipt-filter +kmod-ipv6 +(TARGET_ipq806x||TARGET_ipq):kmod-qca-rfs +kmod-ppp
+  DEPENDS:=@TARGET_ipq_ipq40xx||TARGET_ar71xx||TARGET_ipq806x +kmod-ipt-extra +kmod-ipt-filter +kmod-ipv6 +TARGET_ipq:kmod-qca-rfs +kmod-ppp
   TITLE+= (hnat)
   VARIANT:=hnat
 endef
@@ -53,12 +54,25 @@ ifeq ($(GCC_VERSION), 4.8)
 GCC_VERSION=4.8.3
 endif
 
-QCASSDK_CONFIG_OPTS+= TOOL_PATH=$(TOOLCHAIN_DIR)/bin/ \
+ifdef CONFIG_TOOLCHAIN_BIN_PATH
+TOOLCHAIN_BIN_PATH=$(CONFIG_TOOLCHAIN_BIN_PATH)
+else
+TOOLCHAIN_BIN_PATH=$(TOOLCHAIN_DIR)/bin
+endif
+
+ifdef CONFIG_TARGET_NAME
+TARGET=$(CONFIG_TARGET_NAME)
+else
+TARGET=arm-openwrt-linux-uclibcgnueabi
+endif
+
+QCASSDK_CONFIG_OPTS+= TOOL_PATH=$(TOOLCHAIN_BIN_PATH) \
                 SYS_PATH=$(LINUX_DIR) \
                 TOOLPREFIX=$(TARGET_CROSS) \
                 KVER=$(LINUX_VERSION) \
                 ARCH=$(LINUX_KARCH) \
 		TARGET_SUFFIX=$(CONFIG_TARGET_SUFFIX) \
+		TARGET_NAME=$(TARGET) \
 		GCC_VERSION=$(GCC_VERSION) \
 		CFLAGS=-I$(STAGING_DIR)/usr/include
 
