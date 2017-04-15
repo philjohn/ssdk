@@ -1638,7 +1638,9 @@ extern "C" {
     SW_API_DEF(SW_API_REG_DUMP, fal_reg_dump), \
     SW_API_DEF(SW_API_DBG_REG_DUMP, fal_dbg_reg_dump),\
     SW_API_DEF(SW_API_DBG_PSGMII_SELF_TEST, fal_debug_psgmii_self_test), \
-    SW_API_DEF(SW_API_PHY_DUMP, fal_phy_dump),
+    SW_API_DEF(SW_API_PHY_DUMP, fal_phy_dump), \
+	SW_API_DEF(SW_API_UNIPHY_REG_GET, fal_uniphy_reg_get), \
+    SW_API_DEF(SW_API_UNIPHY_REG_SET, fal_uniphy_reg_set),
 
 
 #define REG_API_PARAM \
@@ -1653,7 +1655,10 @@ extern "C" {
     SW_API_DESC(SW_API_REG_DUMP) \
     SW_API_DESC(SW_API_DBG_REG_DUMP) \
     SW_API_DESC(SW_API_DBG_PSGMII_SELF_TEST) \
-    SW_API_DESC(SW_API_PHY_DUMP)
+    SW_API_DESC(SW_API_PHY_DUMP) \
+	SW_API_DESC(SW_API_UNIPHY_REG_GET) \
+    SW_API_DESC(SW_API_UNIPHY_REG_SET)
+
 
 #ifdef IN_CTRLPKT
 #define CTRLPKT_API \
@@ -1695,6 +1700,19 @@ extern "C" {
 #else
 #define SERVCODE_API
 #define SERVCODE_API_PARAM
+#endif
+
+#ifdef IN_RSS_HASH
+#define RSS_HASH_API \
+    SW_API_DEF(SW_API_RSS_HASH_CONFIG_SET, fal_rss_hash_config_set), \
+    SW_API_DEF(SW_API_RSS_HASH_CONFIG_GET, fal_rss_hash_config_get),
+
+#define RSS_HASH_API_PARAM \
+    SW_API_DESC(SW_API_RSS_HASH_CONFIG_SET) \
+    SW_API_DESC(SW_API_RSS_HASH_CONFIG_GET)
+#else
+#define RSS_HASH_API
+#define RSS_HASH_API_PARAM
 #endif
 
 #ifdef IN_SHAPER
@@ -1815,6 +1833,7 @@ extern "C" {
     REG_API \
     CTRLPKT_API \
     SERVCODE_API \
+	RSS_HASH_API \
 	POLICER_API \
 	SHAPER_API \
     SW_API_DEF(SW_API_MAX, NULL),
@@ -1858,6 +1877,7 @@ extern "C" {
     REG_API_PARAM \
     CTRLPKT_API_PARAM \
     SERVCODE_API_PARAM \
+	RSS_HASH_API_PARAM \
 	POLICER_API_PARAM \
 	SHAPER_API_PARAM \
     SW_PARAM_DEF(SW_API_MAX, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),

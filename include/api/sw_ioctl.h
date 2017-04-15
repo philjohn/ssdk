@@ -780,6 +780,11 @@ extern "C" {
 #define SW_API_FLOW_HOST_DEL         (21  + SW_API_FLOW_OFFSET)
 #define SW_API_FLOW_HOST_GET         (22  + SW_API_FLOW_OFFSET)
 
+/* rss hash */
+#define SW_API_RSS_HASH_OFFSET		2400
+#define SW_API_RSS_HASH_CONFIG_SET	(0 + SW_API_RSS_HASH_OFFSET)
+#define SW_API_RSS_HASH_CONFIG_GET	(1 + SW_API_RSS_HASH_OFFSET)
+
 /* bm */
 #define SW_API_BM_OFFSET            3000
 #define SW_API_BM_CTRL_SET         (0  + SW_API_BM_OFFSET)
@@ -811,7 +816,8 @@ extern "C" {
 #define SW_API_DBG_REG_DUMP          		(11  + SW_API_DEBUG_OFFSET)
 #define SW_API_DBG_PSGMII_SELF_TEST          		(12  + SW_API_DEBUG_OFFSET)
 #define SW_API_PHY_DUMP             (13  + SW_API_DEBUG_OFFSET)
-
+#define SW_API_UNIPHY_REG_GET             (20  + SW_API_DEBUG_OFFSET)
+#define SW_API_UNIPHY_REG_SET             (21  + SW_API_DEBUG_OFFSET)
     /* Ctrlpkt Control */
 #define SW_API_CTRLPKT_OFFSET        2500
 #define SW_API_MGMTCTRL_ETHTYPE_PROFILE_SET (0  + SW_API_CTRLPKT_OFFSET)

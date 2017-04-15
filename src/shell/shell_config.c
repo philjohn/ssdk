@@ -953,6 +953,18 @@ struct cmd_des_t gcmd_des[] =
     },
 #endif
 
+	/*RSS HASH*/
+#ifdef IN_RSS_HASH
+	{
+		"rsshash", "config rss hash code",
+		{
+			{"Config", "set", "set ipv4/ipv6 rss hash code", "<ipv4v6|ipv4|ipv6>", SW_API_RSS_HASH_CONFIG_SET, NULL},
+			{"Config", "get", "get ipv4/ipv6 rss hash code", "<ipv4v6|ipv4|ipv6>", SW_API_RSS_HASH_CONFIG_GET, NULL},
+			{NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+		},
+	},
+#endif
+
 #ifdef IN_POLICER
 	{
 		"policer", "config policer",
@@ -1051,6 +1063,8 @@ struct cmd_des_t gcmd_des[] =
             {"phycounter",  "set", "set counter status of a port",   "<port_id> <enable|disable>", SW_API_DEBUG_PHYCOUNTER_SET, NULL},
             {"phycounter",  "get", "get counter status of a port",   "<port_id>", SW_API_DEBUG_PHYCOUNTER_GET, NULL},
             {"phycounter",  "show", "show counter of a port",   "<port_id>", SW_API_DEBUG_PHYCOUNTER_SHOW, NULL},
+            {"uniphy", "get", "read uniphy register", "<reg_addr> <uniphy_index> <4>", SW_API_UNIPHY_REG_GET, NULL},
+            {"uniphy", "set", "write uniphy register", "<reg_addr> <uniphy_index> <value> <4>", SW_API_UNIPHY_REG_SET, NULL},
             {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
         },
     },
