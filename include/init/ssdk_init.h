@@ -65,6 +65,10 @@ extern "C" {
     typedef sw_error_t
     (*uniphy_reg_get) (a_uint32_t dev_id, a_uint32_t index, a_uint32_t reg_addr, a_uint8_t *reg_data, a_uint32_t len);
 
+    typedef void (*mii_reg_set)(a_uint32_t reg, a_uint32_t val);
+
+    typedef a_uint32_t (*mii_reg_get)(a_uint32_t reg);
+
     typedef struct
     {
         mdio_reg_set    mdio_set;
@@ -75,6 +79,8 @@ extern "C" {
         psgmii_reg_get     psgmii_reg_get;
         uniphy_reg_set     uniphy_reg_set;
         uniphy_reg_get     uniphy_reg_get;
+	mii_reg_set	mii_reg_set;
+	mii_reg_get	mii_reg_get;
     } hsl_reg_func;
 
     typedef struct
