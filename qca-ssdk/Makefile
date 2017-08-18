@@ -135,6 +135,9 @@ define Build/InstallDev
 	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_mib.h ]; then \
 	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_mib.h $(1)/usr/include/qca-ssdk/fal/; \
 	fi
+	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_port_ctrl.h ]; then \
+	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_port_ctrl.h $(1)/usr/include/qca-ssdk/fal/; \
+	fi
 	if [ -f $(PKG_BUILD_DIR)/include/ref/ref_port_ctrl.h ]; then \
 	$(CP) -rf $(PKG_BUILD_DIR)/include/ref/ref_port_ctrl.h $(1)/usr/include/qca-ssdk/ref/; \
 	fi
