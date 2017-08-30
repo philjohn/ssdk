@@ -1,0 +1,8 @@
+[submodule "qca-ssdk/src"]
+	path = qca-ssdk/src
+	url = https://source.codeaurora.org/quic/qsdk/oss/lklm/qca-ssdk
+	branch = master
+[submodule "qca-ssdk-shell/src"]
+	path = qca-ssdk-shell/src
+	url = https://source.codeaurora.org/quic/qsdk/oss/ssdk-shell
+	branch = master
